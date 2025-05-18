@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: entrance-examination
+  liquibase:
+    change-log: classpath:db/db/db.changelog-master.yaml
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+    password: password
+
+springdoc:
+  swagger-ui:
+    path: /api-docs
