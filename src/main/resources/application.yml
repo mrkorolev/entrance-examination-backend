@@ -3,12 +3,19 @@ spring:
     name: entrance-examination
   liquibase:
     change-log: classpath:db/db/db.changelog-master.yaml
+  jackson:
+    property-naming-strategy: KEBAB_CASE
+    default-property-inclusion: non_null
 
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
     username: user
     password: password
+
+server:
+  servlet:
+    context-path: /api/v1
 
 springdoc:
   swagger-ui:
