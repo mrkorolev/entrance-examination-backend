@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 @OpenAPIDefinition(
@@ -16,5 +18,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EntranceExaminationApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EntranceExaminationApplication.class, args);
+	}
+
+	@Bean
+	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 }
