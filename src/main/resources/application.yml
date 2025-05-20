@@ -2,7 +2,7 @@ spring:
   application:
     name: entrance-examination
   liquibase:
-    change-log: classpath:db/db/db.changelog-master.yaml
+    change-log: classpath:db/changelog/db.changelog-master.yaml
   jackson:
     property-naming-strategy: KEBAB_CASE
     default-property-inclusion: non_null
