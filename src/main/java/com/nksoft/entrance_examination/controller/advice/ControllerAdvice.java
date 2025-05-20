@@ -18,7 +18,8 @@ public class ControllerAdvice {
             MethodArgumentNotValidException.class, HttpStatus.BAD_REQUEST,
             IllegalArgumentException.class, HttpStatus.BAD_REQUEST,
             IllegalStateException.class, HttpStatus.BAD_REQUEST,
-            EntityExistsException.class, HttpStatus.BAD_REQUEST
+            EntityExistsException.class, HttpStatus.BAD_REQUEST,
+            NumberFormatException.class, HttpStatus.BAD_REQUEST
     );
 
     @ExceptionHandler(Exception.class)

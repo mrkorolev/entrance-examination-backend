@@ -43,6 +43,6 @@ public class ExamCenter {
     @Column(length = 64, unique = true, nullable = false)
     private String name;
     @Column(length = 128)
-    private String address;
+    private String description;
     private int capacity;
 }

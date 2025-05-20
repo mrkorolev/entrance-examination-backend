@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,14 +35,14 @@ public class Exam {
     private ExamCenter examCenter;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "exam_type")
-    private GradeType examType;
-    @Column(name = "exam_date")
-    private LocalDateTime examDate;
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-    @Column(name = "total_questions")
-    private int totalQuestions;
+    @Column(name = "grade_type")
+    private GradeType targetGrade;
     @Column(name = "duration_minutes")
     private int durationInMinutes;
+
+    @Column(name = "exam_date_time")
+    private LocalDateTime dateAndTime;
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }
