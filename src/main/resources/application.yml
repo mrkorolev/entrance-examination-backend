@@ -19,4 +19,4 @@ server:
 
 springdoc:
   swagger-ui:
-    path: /api-docs
+    path: /docs
