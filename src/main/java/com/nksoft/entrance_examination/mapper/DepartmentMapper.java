@@ -11,11 +11,11 @@ import java.util.List;
 public interface DepartmentMapper {
     @Mapping(source = "departmentId", target = "id")
     @Mapping(source = "universityId", target = "university.id")
-    DepartmentDto toDto(Department entity);
+    Department toEntity(DepartmentDto dto);
 
     @Mapping(source = "id", target = "departmentId")
     @Mapping(source = "university.id", target = "universityId")
-    Department toEntity(DepartmentDto dto);
+    DepartmentDto toDto(Department entity);
 
     List<DepartmentDto> toDtoList(List<Department> entityList);
 }

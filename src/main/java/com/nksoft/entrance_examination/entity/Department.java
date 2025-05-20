@@ -36,7 +36,5 @@ public class Department {
     private GradeType preferredGrade;
 
     private String name;
-    private int capacity;
-
-    // TODO: think about how to save student preferences (separate table or else...)
+    private int quota;
 }
