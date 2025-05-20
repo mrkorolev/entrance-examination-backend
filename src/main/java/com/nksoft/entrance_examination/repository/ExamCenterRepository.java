@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExamCenterRepository extends JpaRepository<ExamCenter, Long> {
+    boolean existsByName(String name);
 }

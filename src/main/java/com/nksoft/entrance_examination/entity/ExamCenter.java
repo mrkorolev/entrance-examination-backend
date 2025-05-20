@@ -1,6 +1,7 @@
 package com.nksoft.entrance_examination.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,11 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ *  Entity class representing places for holding examinations
+ *  Related entities: Exam, ExamEntry, Student
+ */
 
 @Entity
 @Getter
@@ -34,7 +40,9 @@ public class ExamCenter {
             orphanRemoval = true)
     private List<Exam> exams = new ArrayList<>();
 
+    @Column(length = 64, unique = true, nullable = false)
     private String name;
+    @Column(length = 128)
     private String address;
     private int capacity;
 }
