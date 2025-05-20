@@ -29,7 +29,7 @@ public class ControllerAdvice {
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
                         .collect(Collectors.joining(", "))
                 : e.getMessage();
-        ErrorResponse response = ErrorResponse.of(status, message);
+        ErrorResponse response = new ErrorResponse(status, message);
         return new ResponseEntity<>(response, status);
     }
 }
