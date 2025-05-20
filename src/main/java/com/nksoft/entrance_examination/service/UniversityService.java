@@ -1,8 +1,8 @@
 package com.nksoft.entrance_examination.service;
 
-import com.nksoft.entrance_examination.dto.UniversityDto;
 import com.nksoft.entrance_examination.entity.University;
 import com.nksoft.entrance_examination.repository.UniversityRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +18,14 @@ public class UniversityService {
     private final UniversityRepository uniRepository;
 
     @Transactional(readOnly = true)
-    public List<University> getAllUniversities() {
-        return uniRepository.findAll();
+    public List<University> findUniversities() {
+        List<University> universities = uniRepository.findAll();
+        log.info("Total universities found: {}", universities.size());
+        return universities;
     }
 
     @Transactional(readOnly = true)
-    public University getUniversityById(Long id) {
+    public University findUniversityById(Long id) {
         return getByIdOrThrow(id);
     }
 
@@ -35,18 +37,19 @@ public class UniversityService {
         return registered;
     }
 
-    private void validateByName(String universityName) {
-        if (uniRepository.existsByName(universityName)) {
-            throw new IllegalStateException("University with name " + universityName + " already exists");
-        }
-    }
-
     public void removeUniversityById(Long id) {
         uniRepository.deleteById(id);
+        log.info("University with ID = {} removed", id);
     }
 
     private University getByIdOrThrow(Long id) {
         return uniRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("University with ID = " + id + " does not exist!"));
+    }
+
+    private void validateByName(String universityName) {
+        if (uniRepository.existsByName(universityName)) {
+            throw new EntityExistsException("University with name " + universityName + " already exists");
+        }
     }
 }
