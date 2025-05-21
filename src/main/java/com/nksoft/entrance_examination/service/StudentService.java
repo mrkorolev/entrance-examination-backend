@@ -1,6 +1,5 @@
 package com.nksoft.entrance_examination.service;
 
-import com.nksoft.entrance_examination.entity.Department;
 import com.nksoft.entrance_examination.entity.Student;
 import com.nksoft.entrance_examination.repository.DepartmentRepository;
 import com.nksoft.entrance_examination.repository.StudentRepository;
@@ -12,13 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 @Slf4j
 @Service

@@ -15,11 +15,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *  Entity class representing a container of departments
- *  Related entities: Department, Student
- */
-
 @Entity
 @Getter
 @Setter

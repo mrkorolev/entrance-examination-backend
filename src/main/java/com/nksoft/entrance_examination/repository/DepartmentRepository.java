@@ -11,10 +11,9 @@ import java.util.List;
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
     boolean existsByName(String name);
 
-    @Query(value = """
+    @Query(nativeQuery = true, value = """
     SELECT unnest(:ids) AS missing_id
     EXCEPT
-    SELECT id FROM departments
-    """, nativeQuery = true)
+    SELECT id FROM departments""")
     List<Long> findMissingDepartmentIds(List<Long> ids);
 }

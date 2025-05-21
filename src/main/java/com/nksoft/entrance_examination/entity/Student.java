@@ -1,6 +1,5 @@
 package com.nksoft.entrance_examination.entity;
 
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.array.LongArrayType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

@@ -30,6 +30,7 @@ public class StudentController {
     private final StudentService studentService;
     private final StudentMapper studentMapper;
 
+    // TODO: add pagination, potentially ~10^6 records
     @Operation(summary = "Get students", description = "Returns a list of students")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of students"))
     @GetMapping

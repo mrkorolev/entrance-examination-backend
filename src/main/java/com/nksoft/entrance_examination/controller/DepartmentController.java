@@ -29,6 +29,7 @@ public class DepartmentController {
     private final DepartmentService depService;
     private final DepartmentMapper depMapper;
 
+    // TODO: add pagination, potentially ~10^3 records
     @Operation(summary = "Get departments", description = "Returns a list of all departments")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of departments"))
     @GetMapping
