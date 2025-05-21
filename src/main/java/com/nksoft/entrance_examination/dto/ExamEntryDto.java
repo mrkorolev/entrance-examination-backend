@@ -28,6 +28,6 @@ public class ExamEntryDto {
     private Integer incorrectAnswers;
 
     @Null(message = "Registration date is not to be provided externally")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 }

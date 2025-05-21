@@ -51,7 +51,7 @@ public class StudentService {
     }
 
     // TODO: finish refactoring parsing logic
-    public void processBatchFile(MultipartFile file) {
+    public void processBatchFile(MultipartFile file, String delimiter) throws IOException {
         validateFileNotEmpty(file);
         log.info("Batch file processing: {}, [size: {} bytes, content type: {}]",
                 file.getOriginalFilename(),
@@ -66,7 +66,7 @@ public class StudentService {
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.trim().isEmpty()) continue;
-                Student toSave = parseToStudent(line);
+                Student toSave = parseToStudent(line, delimiter);
                 batchToSave.add(toSave);
                 if (batchToSave.size() == batchSize) {
                     studentRepository.saveAll(batchToSave);
@@ -76,13 +76,11 @@ public class StudentService {
             if (!batchToSave.isEmpty()) {
                 studentRepository.saveAll(batchToSave);
             }
-            log.info("Bulk save complete: {} new students", lineNumber);
-        } catch(IOException e) {
-            throw new RuntimeException("Failed to read batch file, contact IT support");
+            log.info("Batch insert complete: {} new students", lineNumber);
         }
     }
 
-    private Student parseToStudent(String line) {
+    private Student parseToStudent(String line, String delimiter) {
         // TODO: finish parsing logic here...
         return null;
     }

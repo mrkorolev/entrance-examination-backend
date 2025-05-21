@@ -46,13 +46,15 @@ public class Student {
     @Column(name = "department_preferences", columnDefinition = "bigint[]")
     @Type(LongArrayType.class)
     private Long[] departmentPreferences;
+    @Column(name = "placed_preference_idx")
+    private Integer placedPreferenceIdx;
 
     private Float cgpa;
-    @Column(name = "grade1_result", nullable = false)
+    @Column(name = "grade1_result")
     private Float grade1Result;
-    @Column(name = "grade2_result", nullable = false)
+    @Column(name = "grade2_result")
     private Float grade2Result;
-    @Column(name = "grade3_result", nullable = false)
+    @Column(name = "grade3_result")
     private Float grade3Result;
 
     @CreationTimestamp

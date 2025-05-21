@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -61,18 +65,19 @@ public class StudentController {
         return studentMapper.toDto(registered);
     }
 
-    @Operation(summary = "Student bulk insert", description = "Registers students based on info provided in a bulk file")
+    @Operation(summary = "Student batch insert", description = "Registers students based on delimiter & info provided in a batch file")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of departments from a bulk file"),
+            @ApiResponse(responseCode = "201", description = "Successful creation of departments from a batch file"),
             @ApiResponse(responseCode = "400", description = """
-            An error occurred while parsing through the file. Happens if:
-            - provided student bulk file is empty"
+            An error occurred while parsing through the batch file. Happens if:
+            - provided student file is empty"
             - error happened while parsing the file (e.g. file format/delimiter is invalid)"""),
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/testing-batch-upload")
-    public void uploadStudentsBatch(@RequestBody MultipartFile file) {
-        studentService.processBatchFile(file);
+    public ResponseEntity<?> uploadStudentsBatch(@RequestBody MultipartFile file,
+                                                 @RequestParam(defaultValue = " ") String delimiter) throws IOException {
+        studentService.processBatchFile(file, delimiter);
+        return ResponseEntity.ok("Successfully processed students batch file");
     }
 
     @Operation(summary = "Update student's department preferences",

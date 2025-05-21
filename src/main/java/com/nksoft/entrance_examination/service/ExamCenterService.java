@@ -43,12 +43,12 @@ public class ExamCenterService {
 
     private ExamCenter getByIdOrThrow(Long id) {
         return exCtrRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Exam center with ID = " + id + " does not exist!"));
+                () -> new EntityNotFoundException("Exam center with ID = " + id + " does not exist"));
     }
 
     private void validateByName(String name) {
         if (exCtrRepository.existsByName(name)) {
-            throw new EntityExistsException("Exam center with name '" + name + "' already exists!");
+            throw new EntityExistsException("Exam center with name '" + name + "' already exists");
         }
     }
 }

@@ -30,10 +30,12 @@ public class StudentDto {
 
     @Null(message = "Student's department choices are not to be provided externally")
     private Long[] departmentPreferenceIds;
+    @Null(message = "Student's final department placement is not to be provided externally")
+    private Integer placedPreferenceIdx;
+
     @Positive(message = "CGPA should be greater than zero")
     @Max(value = 100, message = "CGPA maximum value is 100")
     private Float cgpa;
-
     @Null(message = "Student's exam results for grade1 are not to be provided externally")
     private Float grade1Result;
     @Null(message = "Student's exam results for grade2 are not to be provided externally")
@@ -42,6 +44,6 @@ public class StudentDto {
     private Float grade3Result;
 
     @Null(message = "Registration date is not to be provided externally")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime registeredAt;
 }

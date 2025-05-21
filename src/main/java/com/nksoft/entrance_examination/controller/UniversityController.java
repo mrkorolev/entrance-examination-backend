@@ -28,7 +28,7 @@ public class UniversityController {
     private final UniversityService uniService;
     private final UniversityMapper uniMapper;
 
-    @Operation(summary = "Get universities", description = "Returns a list of all universities")
+    @Operation(summary = "Get universities", description = "Returns a list of universities")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of universities"))
     @GetMapping
     public List<UniversityDto> getUniversities() {

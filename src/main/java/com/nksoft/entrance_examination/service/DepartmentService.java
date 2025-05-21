@@ -47,7 +47,7 @@ public class DepartmentService {
     }
 
     // TODO: finish refactoring parsing logic
-    public void processBatchFile(MultipartFile file) {
+    public void processBatchFile(MultipartFile file, String delimiter) throws IOException {
         validateFileNotEmpty(file);
         log.info("Batch file processing: {}, [size: {} bytes, content type: {}]",
                 file.getOriginalFilename(),
@@ -60,19 +60,17 @@ public class DepartmentService {
             while((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.trim().isEmpty()) continue;
-                Department toSave = parseToDepartment(line);
+                Department toSave = parseToDepartment(line, delimiter);
                 batchToSave.add(toSave);
             }
 
             List<Department> saved = depRepository.saveAll(batchToSave);
-            log.info("Bulk save complete: {} new departments", saved.size());
-        } catch(IOException e) {
-            throw new RuntimeException("Failed to read batch file, contact IT support");
+            log.info("Batch insert complete: {} new departments", saved.size());
         }
     }
 
-    private Department parseToDepartment(String line) {
-        String[] parts = line.split("\\s+");
+    private Department parseToDepartment(String line, String delimiter) {
+        String[] parts = line.split(delimiter);
         Long departmentId = Long.parseLong(parts[0]);
         String departmentName = parts[1];
         int ordinal = Integer.parseInt(parts[2]) - 1;

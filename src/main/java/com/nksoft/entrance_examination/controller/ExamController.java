@@ -49,7 +49,7 @@ public class ExamController {
     @Operation(summary = "Register exam", description = "Registers and returns a new exam")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Successful creation of exam with a provided dto"),
-            @ApiResponse(responseCode = "400", description = "Exam to be registered has a time/capacity overlap with another exam in the same exam center"),
+            @ApiResponse(responseCode = "400", description = "Exam to be registered has a time/capacity overlap with another exam at the same exam center"),
             @ApiResponse(responseCode = "404", description = "Exam center for provided ID doesn't exist")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping

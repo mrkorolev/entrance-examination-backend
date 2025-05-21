@@ -31,8 +31,9 @@ public class ExamDto {
 
     @Future(message = "Exam date must be in the future")
     @NotNull(message = "Exam date and time must be provided")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime examDateTime;
     @Null(message = "Exam creation date is not to be provided externally")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 }

@@ -28,8 +28,8 @@ public class ExamCenterController {
     private final ExamCenterService exCtrService;
     private final ExamCenterMapper exCtrMapper;
 
-    @Operation(summary = "Get exam centers", description = "Returns a list of all exam centers")
-    @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of universities"))
+    @Operation(summary = "Get exam centers", description = "Returns a list of exam centers")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of exam centers"))
     @GetMapping
     public List<ExamCenterDto> getCenters() {
         List<ExamCenter> foundCenters = exCtrService.findCenters();
@@ -48,7 +48,7 @@ public class ExamCenterController {
 
     @Operation(summary = "Register exam center", description = "Registers and returns a newly created exam center")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of university with a provided dto"),
+            @ApiResponse(responseCode = "201", description = "Successful creation of exam center with a provided dto"),
             @ApiResponse(responseCode = "400", description = "Exam center with provided name already exists")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
