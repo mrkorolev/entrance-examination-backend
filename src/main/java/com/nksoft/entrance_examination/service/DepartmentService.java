@@ -47,7 +47,7 @@ public class DepartmentService {
         return registered;
     }
 
-    // TODO: consider @Transactional, finish refactoring parsing logic
+    // TODO: finish refactoring parsing logic
     public void processBatchFile(MultipartFile file) {
         validateFileNotEmpty(file);
         log.info("Batch file processing: {}, [size: {} bytes, content type: {}]",
@@ -61,18 +61,18 @@ public class DepartmentService {
             while((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.trim().isEmpty()) continue;
-                Department toAdd = parseToEntity(line);
-                batchToSave.add(toAdd);
+                Department toSave = parseToDepartment(line);
+                batchToSave.add(toSave);
             }
 
             List<Department> saved = depRepository.saveAll(batchToSave);
-            log.info("Batch saved: {} new departments", saved.size());
+            log.info("Bulk save complete: {} new departments", saved.size());
         } catch(IOException e) {
             throw new RuntimeException("Failed to read batch file, contact IT support");
         }
     }
 
-    private Department parseToEntity(String line) {
+    private Department parseToDepartment(String line) {
         String[] parts = line.split("\\s+");
         Long departmentId = Long.parseLong(parts[0]);
         String departmentName = parts[1];
@@ -107,7 +107,7 @@ public class DepartmentService {
 
     private void validateFileNotEmpty(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("Provided file is empty, check file content or contact IT support");
+            throw new IllegalArgumentException("Provided file is empty, check file contents and try again");
         }
     }
 }

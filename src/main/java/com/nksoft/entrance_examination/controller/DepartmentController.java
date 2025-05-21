@@ -70,9 +70,9 @@ public class DepartmentController {
             @ApiResponse(responseCode = "404", description = "University with ID provided in the dto doesn't exist"),
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/testing-batch-upload")   // TODO: consider HttpStatus.ACCEPTED
-    public void uploadDepartmentsBatch(@RequestBody MultipartFile batchFile) {
-        depService.processBatchFile(batchFile);
+    @PostMapping("/testing-batch-upload")
+    public void uploadDepartmentsBatch(@RequestBody MultipartFile file) {
+        depService.processBatchFile(file);
     }
 
     @Operation(summary = "Remove department", description = "Removes a single department with a unique ID")

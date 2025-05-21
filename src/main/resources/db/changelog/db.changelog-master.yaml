@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changeset/uni_dep_V001_initial.sql
+  - include:
+      file: db/changelog/changeset/students_exams_V001_initial.sql

@@ -1,5 +1,6 @@
 package com.nksoft.entrance_examination.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nksoft.entrance_examination.entity.GradeType;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -32,5 +33,6 @@ public class ExamDto {
     @NotNull(message = "Exam date and time must be provided")
     private LocalDateTime examDateTime;
     @Null(message = "Exam creation date is not to be provided externally")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 }

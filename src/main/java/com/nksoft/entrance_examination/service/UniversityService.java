@@ -44,7 +44,7 @@ public class UniversityService {
 
     private University getByIdOrThrow(Long id) {
         return uniRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("University with ID = " + id + " does not exist!"));
+                () -> new EntityNotFoundException("University with ID = " + id + " does not exist"));
     }
 
     private void validateByName(String universityName) {

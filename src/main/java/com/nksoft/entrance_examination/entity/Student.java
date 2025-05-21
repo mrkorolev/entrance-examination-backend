@@ -1,5 +1,7 @@
 package com.nksoft.entrance_examination.entity;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import com.vladmihalcea.hibernate.type.array.LongArrayType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +35,28 @@ public class Student {
             mappedBy = "student",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<ExamEntry> examEntries = new ArrayList<>(3);
+    private List<ExamEntry> examEntries = new ArrayList<>();
 
-    private float cgpa;
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-    @Column(unique = true, nullable = false)
+    @Column(length = 64, nullable = false)
+    private String name;
+    @Column(length = 64, unique = true, nullable = false)
     private String email;
-    @Column(name = "password_encrypted", length = 128, nullable = false)
-    private String passwordEncrypted;
-    @Column(name = "created_at")
+    @Column(name = "password_encrypted", length = 64, nullable = false)
+    private String password;
+
+    @Column(name = "department_preferences", columnDefinition = "bigint[]")
+    @Type(LongArrayType.class)
+    private Long[] departmentPreferences;
+
+    private Float cgpa;
+    @Column(name = "grade1_result", nullable = false)
+    private Float grade1Result;
+    @Column(name = "grade2_result", nullable = false)
+    private Float grade2Result;
+    @Column(name = "grade3_result", nullable = false)
+    private Float grade3Result;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 }
