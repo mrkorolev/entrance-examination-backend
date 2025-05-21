@@ -40,7 +40,7 @@ public class Exam {
     @Column(name = "duration_minutes")
     private int durationInMinutes;
 
-    @Column(name = "exam_date_time")
+    @Column(name = "date_time")
     private LocalDateTime dateAndTime;
     @CreationTimestamp
     @Column(name = "created_at")
