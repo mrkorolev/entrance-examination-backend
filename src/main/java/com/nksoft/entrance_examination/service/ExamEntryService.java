@@ -41,8 +41,12 @@ public class ExamEntryService {
         return registered;
     }
 
+    @Transactional
     public void removeEntryById(Long id) {
-        examEntryRepository.deleteById(id);
+        int count = examEntryRepository.deleteByIdReturningCount(id);
+        if (count == 0) {
+            throw new EntityNotFoundException("Exam entry with ID = " + id + " does not exist");
+        }
         log.info("Removed exam entry with ID = {}", id);
     }
 

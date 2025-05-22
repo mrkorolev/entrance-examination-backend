@@ -16,7 +16,7 @@ import lombok.Setter;
 public class DepartmentDto {
     @Null(message = "Department ID is not to be provided externally")
     private Long departmentId;
-    @Null(message = "University ID must be provided")
+    @NotNull(message = "University ID must be provided")
     private Long universityId;
 
     @NotNull(message = "Preferred department grade must be provided")
@@ -25,7 +25,6 @@ public class DepartmentDto {
     private GradeType preferredGrade;
     @NotBlank(message = "Department name can't be null/empty")
     private String name;
-    @NotNull(message = "Department capacity must be provided")
     @Positive(message = "Department capacity must be greater than zero")
     private Integer quota;
 }

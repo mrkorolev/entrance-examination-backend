@@ -5,7 +5,8 @@
         </filter>
         <encoder>
             <pattern>
-                %cyan(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %highlight(%-5level) %logger{36} %yellow([%file - %line]) %msg%n
+                %cyan(%d{yyyy-MM-dd HH:mm:ss}) %highlight(%-5level)[%yellow(%file - %line)] %msg%n
+<!--                %cyan(%d{yyyy-MM-dd HH:mm:ss}) %magenta([%thread]) %highlight(%-5level) %logger{36} %yellow([%file - %line]) %msg%n-->
             </pattern>
         </encoder>
     </appender>

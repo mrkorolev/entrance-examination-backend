@@ -98,8 +98,12 @@ public class StudentService {
         return updated;
     }
 
+    @Transactional
     public void removeStudentById(Long id) {
-        studentRepository.deleteById(id);
+        int count = studentRepository.deleteByIdReturningCount(id);
+        if (count == 0) {
+            throw new EntityNotFoundException("Student with id " + id + " does not exist");
+        }
         log.info("Removed student with ID = {}", id);
     }
 

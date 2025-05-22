@@ -35,13 +35,16 @@ public class ExamEntry {
     private Exam exam;
 
     @Column(name = "final_score")
-    private int finalScore;
+    private Integer finalScore;
     @Column(name = "correct_answers")
-    private int correctAnswers;
+    private Integer correctAnswers;
     @Column(name = "incorrect_answers")
-    private int incorrectAnswers;
+    private Integer incorrectAnswers;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "results_received_at")
+    private LocalDateTime resultsReceivedAt;
 }

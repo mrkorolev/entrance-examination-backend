@@ -11,7 +11,7 @@
 
 	<groupId>com.nksoft</groupId>
 	<artifactId>entrance-examination</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>entrance-examination</name>
 	<description>Backend for entrance examination system</description>
 

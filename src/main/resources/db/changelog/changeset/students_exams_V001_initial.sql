@@ -32,6 +32,7 @@ CREATE TABLE exam_entries (
     correct_answers int,
     incorrect_answers int,
     created_at timestamp NOT NULL,
+    results_received_at timestamp,
 
     -- single registration for each student is allowed per unique exam
     UNIQUE(student_id, exam_id),

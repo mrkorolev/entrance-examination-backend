@@ -11,6 +11,7 @@ import java.util.List;
 public interface DepartmentMapper {
     @Mapping(source = "departmentId", target = "id")
     @Mapping(source = "universityId", target = "university.id")
+    @Mapping(source = "quota", target = "quota", defaultValue = "30")
     Department toEntity(DepartmentDto dto);
 
     @Mapping(source = "id", target = "departmentId")

@@ -15,7 +15,7 @@ CREATE TABLE departments (
 
     name varchar(64) UNIQUE NOT NULL,
     preferred_grade varchar(6) NOT NULL,
-    quota int DEFAULT 30,
+    quota int NOT NULL,
 
     FOREIGN KEY(university_id) REFERENCES universities(id) ON DELETE CASCADE
 );

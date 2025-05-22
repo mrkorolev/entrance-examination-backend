@@ -38,5 +38,6 @@ public class ExamCenter {
     private String name;
     @Column(length = 128)
     private String description;
-    private int capacity;
+    @Column(nullable = false)
+    private int capacity = 100;
 }

@@ -39,19 +39,23 @@ public class ExamService {
         return registered;
     }
 
+    @Transactional
     public void removeExamById(Long id) {
-        examRepository.deleteById(id);
+        int count = examRepository.deleteByIdReturningCount(id);
+        if (count == 0) {
+            throw new EntityNotFoundException("Exam with ID = " + id + " does not exist");
+        }
         log.info("Exam with ID = {} removed", id);
     }
 
     private Exam getByIdOrThrow(Long id) {
         return examRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("University with ID = " + id + " does not exist!"));
+                () -> new EntityNotFoundException("Exam with ID = " + id + " does not exist"));
     }
 
     private void validateExamCenterExists(Long id) {
         if (!exCtrRepository.existsById(id)) {
-            throw new EntityNotFoundException("Exam center with ID = " + id + " does not exist!");
+            throw new EntityNotFoundException("Exam center with ID = " + id + " does not exist");
         }
     }
 

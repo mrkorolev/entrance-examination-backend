@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ExamCenterMapper {
     @Mapping(source = "examCenterId", target = "id")
+    @Mapping(source = "capacity", target = "capacity", defaultValue = "100")
     ExamCenter toEntity(ExamCenterDto dto);
 
     @Mapping(source = "id", target = "examCenterId")

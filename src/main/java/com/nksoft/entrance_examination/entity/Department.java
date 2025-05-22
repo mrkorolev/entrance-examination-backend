@@ -36,5 +36,6 @@ public class Department {
     private GradeType preferredGrade;
 
     private String name;
-    private int quota;
+    @Column(nullable = false)
+    private int quota = 30;
 }

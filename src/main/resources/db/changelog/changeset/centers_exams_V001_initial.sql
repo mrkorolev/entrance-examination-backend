@@ -3,7 +3,7 @@ CREATE TABLE exam_centers (
 
     name varchar(64) UNIQUE NOT NULL,
     description varchar(128),
-    capacity int DEFAULT 100
+    capacity int NOT NULL
 );
 
 CREATE TABLE exams (

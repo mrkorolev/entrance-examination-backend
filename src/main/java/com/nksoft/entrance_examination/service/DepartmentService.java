@@ -80,8 +80,12 @@ public class DepartmentService {
         return new Department(departmentId, null, gradeType, departmentName, capacity);
     }
 
+    @Transactional
     public void removeDepartmentById(Long id) {
-        depRepository.deleteById(id);
+        int count = depRepository.deleteByIdReturningCount(id);
+        if (count == 0) {
+            throw new EntityNotFoundException("Department with ID = " + id + " does not exist");
+        }
         log.info("Removed department with ID = {}", id);
     }
 

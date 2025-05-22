@@ -36,8 +36,12 @@ public class UniversityService {
         return registered;
     }
 
+    @Transactional
     public void removeUniversityById(Long id) {
-        uniRepository.deleteById(id);
+        int count = uniRepository.deleteByIdReturningCount(id);
+        if (count == 0) {
+            throw new EntityNotFoundException("University with ID = " + id + " does not exist");
+        }
         log.info("University with ID = {} removed", id);
     }
 

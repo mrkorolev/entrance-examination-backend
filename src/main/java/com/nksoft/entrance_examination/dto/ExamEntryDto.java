@@ -30,4 +30,8 @@ public class ExamEntryDto {
     @Null(message = "Registration date is not to be provided externally")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
+
+    @Null(message= "Results dater is not to be provided externally")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime resultsReceivedAt;
 }

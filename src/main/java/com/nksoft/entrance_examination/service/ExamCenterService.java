@@ -36,8 +36,12 @@ public class ExamCenterService {
         return registered;
     }
 
+    @Transactional
     public void removeCenterById(Long id) {
-        exCtrRepository.deleteById(id);
+        int count = exCtrRepository.deleteByIdReturningCount(id);
+        if (count == 0) {
+            throw new EntityNotFoundException("Exam center with ID = " + id + " does not exist");
+        }
         log.info("Exam center with ID = {} removed", id);
     }
 
