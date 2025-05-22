@@ -27,7 +27,8 @@ import java.util.List;
 @Table(name = "students")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // TODO: needed for prod
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(
@@ -48,7 +49,7 @@ public class Student {
     private Long[] departmentPreferences;
     @Column(name = "placed_preference_idx")
     private Integer placedPreferenceIdx;
-
+    @Column(nullable = false)
     private Float cgpa;
     @Column(name = "grade1_result")
     private Float grade1Result;

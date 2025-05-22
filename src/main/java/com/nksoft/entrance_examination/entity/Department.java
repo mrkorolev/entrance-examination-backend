@@ -23,7 +23,8 @@ import lombok.Setter;
 @Table(name = "departments")
 public class Department {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // TODO: needed for prod
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // Default for ManyToOne relation: FetchType.EAGER
@@ -34,7 +35,7 @@ public class Department {
     @Enumerated(EnumType.STRING)
     @Column(name = "preferred_grade", nullable = false)
     private GradeType preferredGrade;
-
+    @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private int quota = 30;

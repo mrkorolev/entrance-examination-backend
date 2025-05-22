@@ -56,16 +56,22 @@ public class DepartmentService {
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<Department> batchToSave = new ArrayList<>();
             String line;
-            int lineNumber = 0;
+            int lineNumber = 0, batchSize = 50;
             while((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.trim().isEmpty()) continue;
                 Department toSave = parseToDepartment(line, delimiter);
+                System.out.println(toSave.getId());
                 batchToSave.add(toSave);
+                if (batchToSave.size() == batchSize) {
+                    depRepository.saveAll(batchToSave);
+                    batchToSave.clear();
+                }
             }
-
-            List<Department> saved = depRepository.saveAll(batchToSave);
-            log.info("Batch insert complete: {} new departments", saved.size());
+            if (!batchToSave.isEmpty()) {
+                depRepository.saveAll(batchToSave);
+            }
+            log.info("Batch insert complete: {} new departments", lineNumber);
         }
     }
 

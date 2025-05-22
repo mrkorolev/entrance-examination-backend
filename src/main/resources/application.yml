@@ -22,10 +22,10 @@ spring:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 
   # reduced logging
-logging:
-  level:
-    root: WARN
-    com.nksoft: INFO
+#logging:
+#  level:
+#    root: WARN
+#    com.nksoft: INFO
 
 server:
   servlet:

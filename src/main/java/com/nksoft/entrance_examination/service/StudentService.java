@@ -53,10 +53,8 @@ public class StudentService {
     // TODO: finish refactoring parsing logic
     public void processBatchFile(MultipartFile file, String delimiter) throws IOException {
         validateFileNotEmpty(file);
-        log.info("Batch file processing: {}, [size: {} bytes, content type: {}]",
-                file.getOriginalFilename(),
-                file.getSize(),
-                file.getContentType());
+        log.info("Batch file processing: {}, [size: {} bytes, content type: {}, delimiter: {}]",
+                file.getOriginalFilename(), file.getSize(), file.getContentType(), delimiter);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<Student> batchToSave = new ArrayList<>();
@@ -80,9 +78,35 @@ public class StudentService {
         }
     }
 
+    // TODO: extract to a separate component
     private Student parseToStudent(String line, String delimiter) {
-        // TODO: finish parsing logic here...
-        return null;
+        String[] params = line.split(delimiter);
+        if (params.length != 15) {
+            throw new IllegalArgumentException("File doesn't follow the expected format: [id, name, grade1, grade2, grade3, preferences(10)]");
+        }
+        Long id = Long.parseLong(params[0]);
+        String name = params[1];
+        float grade1 = Float.parseFloat(params[2]);
+        float grade2 = Float.parseFloat(params[3]);
+        float grade3 = Float.parseFloat(params[4]);
+
+        Long[] preferences = new Long[10];
+        for(int i = 5, j = 0; i < 15; i++, j++) {
+            preferences[j] = Long.parseLong(params[i]);
+        }
+
+        Student toSave = new Student();
+        toSave.setId(id);
+        toSave.setName(name);
+        toSave.setEmail(id + "@gmail.com");
+        toSave.setPassword(id + "_password");
+
+        toSave.setDepartmentPreferences(preferences);
+        toSave.setCgpa(0.0F);
+        toSave.setGrade1Result(grade1);
+        toSave.setGrade2Result(grade2);
+        toSave.setGrade3Result(grade3);
+        return toSave;
     }
 
     public Student updateDepartmentPreferences(Long id, List<Long> departmentIds) {
