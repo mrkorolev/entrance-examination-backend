@@ -1,12 +1,12 @@
 CREATE TABLE students (
-    id bigint PRIMARY KEY,
+--     id bigint PRIMARY KEY,
 
     -- PROD CLAUSE
---     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 
     name varchar(64) NOT NULL,
     email varchar(64) UNIQUE NOT NULL,
-    password_encrypted varchar(64) NOT NULL,
+    password_encrypted varchar(128) NOT NULL,
 
     department_preferences bigint[10],
     placed_preference_idx int,

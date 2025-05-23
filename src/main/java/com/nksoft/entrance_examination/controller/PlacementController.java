@@ -1,8 +1,9 @@
-package com.nksoft.entrance_examination.controller.advice;
+package com.nksoft.entrance_examination.controller;
 
 import com.nksoft.entrance_examination.service.PlacementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlacementController {
     private final PlacementService placementService;
 
-    @PostMapping("/trigger")
+    @GetMapping("/trigger")
     public ResponseEntity<?> triggerPlacementAlgorithm() {
-        return placementService.triggerDepartmentPlacementAlgorithm();
+        placementService.runPlacement();
+        return ResponseEntity.ok("Placement algorithm finished processing");
     }
 }

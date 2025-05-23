@@ -7,6 +7,7 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -152,6 +153,22 @@ public class StudentService {
     private void validateFileNotEmpty(MultipartFile file) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Provided file is empty, check file contents and try again");
+        }
+    }
+
+    @Transactional
+    public Student findStudentByEmail(String email, String password) {
+        log.info("Student data: [{}, {}]", email, password);
+        Student toLogin = studentRepository.findByEmail(email).orElseThrow(
+            () -> new EntityNotFoundException("Student with email '" + email + "' does not exist"));
+        validatePasswordsMatch(password, toLogin.getPassword());
+
+        return toLogin;
+    }
+
+    private void validatePasswordsMatch(String p, String pEncoded) {
+        if (!passwordEncoder.matches(p, pEncoded)) {
+            throw new IllegalArgumentException("Provided incorrect password:" + p);
         }
     }
 }

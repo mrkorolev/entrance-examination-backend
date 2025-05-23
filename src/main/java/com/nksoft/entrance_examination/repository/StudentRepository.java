@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean existsByEmail(String email);
@@ -14,4 +16,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Modifying
     @Query("DELETE FROM Student s WHERE s.id = :id")
     int deleteByIdReturningCount(@Param("id") Long id);
+
+    Optional<Student> findByEmail(String email);
 }
