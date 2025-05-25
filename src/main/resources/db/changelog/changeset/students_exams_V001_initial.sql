@@ -1,9 +1,7 @@
 CREATE TABLE students (
---     id bigint PRIMARY KEY,
-
-    -- PROD CLAUSE
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 
+    student_code bigint UNIQUE NOT NULL,
     name varchar(64) NOT NULL,
     email varchar(64) UNIQUE NOT NULL,
     password_encrypted varchar(128) NOT NULL,

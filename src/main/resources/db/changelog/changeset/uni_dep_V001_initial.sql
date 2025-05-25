@@ -6,13 +6,12 @@ CREATE TABLE universities (
 );
 
 CREATE TABLE departments (
-    id bigint PRIMARY KEY,
+    id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    department_code bigint UNIQUE NOT NULL,
     university_id bigint,
 
     -- PROD CLAUSES
---     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 --     university_id bigint NOT NULL,
-
     name varchar(64) UNIQUE NOT NULL,
     preferred_grade varchar(6) NOT NULL,
     quota int NOT NULL,

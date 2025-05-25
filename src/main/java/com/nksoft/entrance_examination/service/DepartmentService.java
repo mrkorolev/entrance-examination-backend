@@ -47,29 +47,30 @@ public class DepartmentService {
     }
 
     // TODO: finish refactoring parsing logic
-    public void processBatchFile(MultipartFile file, String delimiter) throws IOException {
+    public void processBatchFile(MultipartFile file, String delimiter, int batchSize) throws IOException {
         validateFileNotEmpty(file);
         log.info("Batch file processing: {}, [size: {} bytes, content type: {}]",
                 file.getOriginalFilename(),
                 file.getSize(),
                 file.getContentType());
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            List<Department> batchToSave = new ArrayList<>();
+            List<Department> toInsert = new ArrayList<>();
             String line;
-            int lineNumber = 0, batchSize = 50;
+            int lineNumber = 0;
             while((line = reader.readLine()) != null) {
                 lineNumber++;
-                if (line.trim().isEmpty()) continue;
+                if (line.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Empty are not allowed in a batch file");
+                };
                 Department toSave = parseToDepartment(line, delimiter);
-                System.out.println(toSave.getId());
-                batchToSave.add(toSave);
-                if (batchToSave.size() == batchSize) {
-                    depRepository.saveAll(batchToSave);
-                    batchToSave.clear();
+                toInsert.add(toSave);
+                if (toInsert.size() == batchSize) {
+                    depRepository.saveAll(toInsert);
+                    toInsert.clear();
                 }
             }
-            if (!batchToSave.isEmpty()) {
-                depRepository.saveAll(batchToSave);
+            if (!toInsert.isEmpty()) {
+                depRepository.saveAll(toInsert);
             }
             log.info("Batch insert complete: {} new departments", lineNumber);
         }
@@ -77,13 +78,18 @@ public class DepartmentService {
 
     private Department parseToDepartment(String line, String delimiter) {
         String[] parts = line.split(delimiter);
-        Long departmentId = Long.parseLong(parts[0]);
+        Long code = Long.parseLong(parts[0]);
         String departmentName = parts[1];
         int ordinal = Integer.parseInt(parts[2]) - 1;
         GradeType gradeType = GradeType.values()[ordinal];
-        int capacity = Integer.parseInt(parts[3]);
+        int quota = Integer.parseInt(parts[3]);
 
-        return new Department(departmentId, null, gradeType, departmentName, capacity);
+        Department department = new Department();
+        department.setDepartmentCode(code);
+        department.setName(departmentName);
+        department.setPreferredGrade(gradeType);
+        department.setQuota(quota);
+        return department;
     }
 
     @Transactional

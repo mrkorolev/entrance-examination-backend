@@ -4,7 +4,9 @@ import com.nksoft.entrance_examination.entity.Student;
 import com.nksoft.entrance_examination.repository.DepartmentRepository;
 import com.nksoft.entrance_examination.repository.StudentRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -52,28 +54,30 @@ public class StudentService {
     }
 
     // TODO: finish refactoring parsing logic
-    public void processBatchFile(MultipartFile file, String delimiter) throws IOException {
+    public void processBatchFile(MultipartFile file, String delimiter, int batchSize) throws IOException {
         validateFileNotEmpty(file);
         log.info("Batch file processing: {}, [size: {} bytes, content type: {}, delimiter: {}]",
                 file.getOriginalFilename(), file.getSize(), file.getContentType(), delimiter);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            List<Student> batchToSave = new ArrayList<>();
             String line;
-            int lineNumber = 0, batchSize = 50;
+            int lineNumber = 0;
+            List<Student> toInsert = new ArrayList<>();
 
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                if (line.trim().isEmpty()) continue;
+                if (line.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Empty are not allowed in a batch file");
+                }
                 Student toSave = parseToStudent(line, delimiter);
-                batchToSave.add(toSave);
-                if (batchToSave.size() == batchSize) {
-                    studentRepository.saveAll(batchToSave);
-                    batchToSave.clear();
+                toInsert.add(toSave);
+                if (toInsert.size() == batchSize) {
+                    studentRepository.saveAll(toInsert);
+                    toInsert.clear();
                 }
             }
-            if (!batchToSave.isEmpty()) {
-                studentRepository.saveAll(batchToSave);
+            if (!toInsert.isEmpty()) {
+                studentRepository.saveAll(toInsert);
             }
             log.info("Batch insert complete: {} new students", lineNumber);
         }
@@ -85,7 +89,7 @@ public class StudentService {
         if (params.length != 15) {
             throw new IllegalArgumentException("File doesn't follow the expected format: [id, name, grade1, grade2, grade3, preferences(10)]");
         }
-        Long id = Long.parseLong(params[0]);
+        Long code = Long.parseLong(params[0]);
         String name = params[1];
         float grade1 = Float.parseFloat(params[2]);
         float grade2 = Float.parseFloat(params[3]);
@@ -97,11 +101,10 @@ public class StudentService {
         }
 
         Student toSave = new Student();
-        toSave.setId(id);
+        toSave.setStudentCode(code);
         toSave.setName(name);
-        toSave.setEmail(id + "@gmail.com");
-        toSave.setPassword(id + "_password");
-
+        toSave.setEmail(code + "@gmail.com");
+        toSave.setPassword(code + "_password");
         toSave.setDepartmentPreferences(preferences);
         toSave.setCgpa(0.0F);
         toSave.setGrade1Result(grade1);

@@ -27,9 +27,11 @@ import java.util.List;
 @Table(name = "students")
 public class Student {
     @Id
-    // TODO: needed for prod
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "student_code", nullable = false, unique = true)
+    private Long studentCode;
 
     @OneToMany(
             mappedBy = "student",

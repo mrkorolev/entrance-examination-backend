@@ -3,6 +3,7 @@ package com.nksoft.entrance_examination.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -17,6 +18,9 @@ import java.util.List;
 public class StudentDto {
     @Null(message = "Student ID is not to be provided externally")
     private Long studentId;
+
+    @NotNull(message = "Student code must be provided")
+    private Long studentCode;
 
     @Null(message = "Exam entry IDs are not to be provided externally")
     private List<Long> examEntryIds;

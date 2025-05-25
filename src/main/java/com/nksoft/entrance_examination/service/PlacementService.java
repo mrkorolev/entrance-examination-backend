@@ -6,10 +6,13 @@ import com.nksoft.entrance_examination.repository.DepartmentRepository;
 import com.nksoft.entrance_examination.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +30,7 @@ public class PlacementService {
     private final DepartmentRepository departmentRepository;
 
     @Transactional
-    public void runPlacement() {
+    public ByteArrayResource runPlacement() {
         List<Student> students = studentRepository.findAll();
         List<Department> departmentList = departmentRepository.findAll();
 
@@ -85,7 +88,38 @@ public class PlacementService {
 
         studentRepository.saveAll(students);
         log.info("Placement completed for {} students", students.size());
+
+        StringBuilder reportBuilder = new StringBuilder();
+        for (Department department : departmentList) {
+            reportBuilder.append(department.getId()).append(" ")
+                    .append(department.getName()).append(" ")
+                    .append(department.getPreferredGrade().ordinal() + 1).append(" ")
+                    .append(department.getQuota()).append("\n\n");
+
+            Queue<StudentWithScore> placedStudentsQueue = departmentQueues.get(department.getId());
+            List<StudentWithScore> placedStudentsPerDepartment = new ArrayList<>(placedStudentsQueue);
+            placedStudentsPerDepartment.sort(Comparator.comparingDouble((StudentWithScore s) -> s.score).reversed());
+            for (StudentWithScore sws : placedStudentsPerDepartment) {
+                Student s = sws.student;
+                System.out.println(sws.student);
+                reportBuilder
+                        .append(s.getId()).append(" ")
+                        .append(s.getName()).append(" ");
+                float grade = switch (department.getPreferredGrade()) {
+                    case GRADE1 -> s.getGrade1Result();
+                    case GRADE2 -> s.getGrade2Result();
+                    case GRADE3 -> s.getGrade3Result();
+                };
+
+                reportBuilder.append(grade).append(" ")
+                        .append(s.getPlacedPreferenceIdx() + 1).append(" ")
+                        .append(Arrays.asList(s.getDepartmentPreferences()))
+                        .append("\n");
+            }
+            reportBuilder.append("----------------------------------\n");
+        }
+        return new ByteArrayResource(reportBuilder.toString().getBytes(StandardCharsets.UTF_8));
     }
 
-    private record StudentWithScore(Student student, double score) {}
+    private record StudentWithScore(Student student, double score) { }
 }

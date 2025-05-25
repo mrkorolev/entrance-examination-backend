@@ -76,8 +76,9 @@ public class DepartmentController {
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
     @PostMapping("/testing-batch-upload")
     public ResponseEntity<?> uploadDepartmentsBatch(@RequestBody MultipartFile file,
-                                                    @RequestParam(defaultValue = " ") String delimiter) throws IOException {
-        depService.processBatchFile(file, delimiter);
+                                                    @RequestParam(defaultValue = " ") String delimiter,
+                                                    @RequestParam(defaultValue = "25") int batchSize) throws IOException {
+        depService.processBatchFile(file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed departments the batch file");
     }
 
