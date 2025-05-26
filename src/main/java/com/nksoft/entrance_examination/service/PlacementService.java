@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,30 +35,27 @@ public class PlacementService {
         List<Student> students = studentRepository.findAll();
         List<Department> departmentList = departmentRepository.findAll();
 
-        departmentList.sort(Comparator.comparingLong(Department::getId));
-
+        departmentList.sort(Comparator.comparingLong(Department::getDepartmentCode));
         Map<Long, Department> departmentMap = departmentList.stream()
-                .collect(Collectors.toMap(Department::getId, d -> d));
+                .collect(Collectors.toMap(Department::getDepartmentCode, Function.identity()));
 
         Map<Long, PriorityQueue<StudentWithScore>> departmentQueues = new HashMap<>();
         for (Department department : departmentList) {
-            departmentQueues.put(department.getId(), new PriorityQueue<>(Comparator.comparingDouble(s -> s.score)));
+            departmentQueues.put(
+                    department.getDepartmentCode(),
+                    new PriorityQueue<>(Comparator.comparingDouble(s -> s.score))
+            );
         }
 
         Queue<Student> processingQueue = new ArrayDeque<>(students);
         while (!processingQueue.isEmpty()) {
             Student student = processingQueue.poll();
-
-            if (student.getDepartmentPreferences() == null || student.getPlacedPreferenceIdx() != null && student.getPlacedPreferenceIdx() >= 0) {
-                continue;
-            }
-
-            int idx = student.getPlacedPreferenceIdx() == null ? 0 : student.getPlacedPreferenceIdx();
-
-            if (idx >= student.getDepartmentPreferences().length) {
+            if (student.getPlacedPreferenceIdx() == student.getDepartmentPreferences().length) {
                 student.setPlacedPreferenceIdx(-1);
                 continue;
             }
+
+            int idx = student.getPlacedPreferenceIdx();
 
             Long deptId = student.getDepartmentPreferences()[idx];
             Department department = departmentMap.get(deptId);
@@ -91,19 +89,18 @@ public class PlacementService {
 
         StringBuilder reportBuilder = new StringBuilder();
         for (Department department : departmentList) {
-            reportBuilder.append(department.getId()).append(" ")
+            reportBuilder.append(department.getDepartmentCode()).append(" ")
                     .append(department.getName()).append(" ")
                     .append(department.getPreferredGrade().ordinal() + 1).append(" ")
                     .append(department.getQuota()).append("\n\n");
 
-            Queue<StudentWithScore> placedStudentsQueue = departmentQueues.get(department.getId());
+            Queue<StudentWithScore> placedStudentsQueue = departmentQueues.get(department.getDepartmentCode());
             List<StudentWithScore> placedStudentsPerDepartment = new ArrayList<>(placedStudentsQueue);
             placedStudentsPerDepartment.sort(Comparator.comparingDouble((StudentWithScore s) -> s.score).reversed());
             for (StudentWithScore sws : placedStudentsPerDepartment) {
                 Student s = sws.student;
-                System.out.println(sws.student);
                 reportBuilder
-                        .append(s.getId()).append(" ")
+                        .append(s.getStudentCode()).append(" ")
                         .append(s.getName()).append(" ");
                 float grade = switch (department.getPreferredGrade()) {
                     case GRADE1 -> s.getGrade1Result();
@@ -116,8 +113,24 @@ public class PlacementService {
                         .append(Arrays.asList(s.getDepartmentPreferences()))
                         .append("\n");
             }
-            reportBuilder.append("----------------------------------\n");
+            reportBuilder.append("--------------------------------------------------------------------\n");
         }
+
+        // write all those who didn't make it
+        List<Student> didntGetPlaced = studentRepository.findAllByPlacedPreferenceIdxOrderByName(-1);
+        reportBuilder.append(-1).append(" ")
+                .append("DIDNT GET PLACED").append("\n\n");
+        for (Student s : didntGetPlaced) {
+            reportBuilder.append(s.getStudentCode()).append(" ")
+                    .append(s.getName()).append(" ")
+                    .append(s.getGrade1Result()).append(" ")
+                    .append(s.getGrade2Result()).append(" ")
+                    .append(s.getGrade3Result()).append(" ")
+                    .append(s.getPlacedPreferenceIdx()).append(" ")
+                    .append(Arrays.asList(s.getDepartmentPreferences()))
+                    .append("\n");
+        }
+
         return new ByteArrayResource(reportBuilder.toString().getBytes(StandardCharsets.UTF_8));
     }
 

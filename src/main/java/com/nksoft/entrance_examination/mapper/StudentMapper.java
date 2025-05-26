@@ -11,11 +11,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StudentMapper {
-    @Mapping(source = "studentId", target = "id")
     @Mapping(source = "registeredAt", target = "createdAt")
     Student toEntity(StudentDto dto);
 
-    @Mapping(source = "id", target = "studentId")
     @Mapping(source = "departmentPreferences", target = "departmentPreferenceIds")
     @Mapping(source = "examEntries", target = "examEntryIds", qualifiedByName = "toExamEntryIds")
     @Mapping(source = "createdAt", target = "registeredAt")

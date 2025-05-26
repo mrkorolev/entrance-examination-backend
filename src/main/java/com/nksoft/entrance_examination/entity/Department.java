@@ -23,10 +23,7 @@ import lombok.Setter;
 @Table(name = "departments")
 public class Department {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "department_code", nullable = false, unique = true)
+    @Column(name = "code", nullable = false, unique = true)
     private Long departmentCode;
 
     // Default for ManyToOne relation: FetchType.EAGER

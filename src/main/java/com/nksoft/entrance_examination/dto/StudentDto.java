@@ -16,9 +16,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class StudentDto {
-    @Null(message = "Student ID is not to be provided externally")
-    private Long studentId;
-
     @NotNull(message = "Student code must be provided")
     private Long studentCode;
 
@@ -48,6 +45,6 @@ public class StudentDto {
     private Float grade3Result;
 
     @Null(message = "Registration date is not to be provided externally")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime registeredAt;
 }

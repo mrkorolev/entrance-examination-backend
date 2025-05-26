@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,13 +43,13 @@ public class DepartmentController {
         return depMapper.toDtoList(foundDepartments);
     }
 
-    @Operation(summary = "Get department by ID", description = "Returns a single department with a unique ID")
+    @Operation(summary = "Get department by code", description = "Returns a single department with a unique code")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of department with a provided ID"),
-            @ApiResponse(responseCode = "404", description = "No department found for provided ID")})
-    @GetMapping("/{id}")
-    public DepartmentDto getDepartmentById(@PathVariable Long id) {
-        Department found = depService.findDepartmentById(id);
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of department with a provided code"),
+            @ApiResponse(responseCode = "404", description = "No department found for provided code")})
+    @GetMapping("/{code}")
+    public DepartmentDto getDepartmentById(@PathVariable Long code) {
+        Department found = depService.findDepartmentByCode(code);
         return depMapper.toDto(found);
     }
 
@@ -63,6 +64,16 @@ public class DepartmentController {
         Department toRegister = depMapper.toEntity(dto);
         Department registered = depService.registerDepartment(toRegister);
         return depMapper.toDto(registered);
+    }
+
+    @Operation(summary = "Remove department", description = "Removes a single department with a unique code")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful removal of department with a provided code"),
+            @ApiResponse(responseCode = "404", description = "No department found for provided code")})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{code}")
+    public void deleteDepartmentById(@PathVariable Long code) {
+        depService.removeDepartmentById(code);
     }
 
     @Operation(summary = "Department batch insert", description = "Registers departments based delimiter & info provided in a batch file")
@@ -82,13 +93,11 @@ public class DepartmentController {
         return ResponseEntity.ok("Successfully processed departments the batch file");
     }
 
-    @Operation(summary = "Remove department", description = "Removes a single department with a unique ID")
+    @Operation(summary = "Export departments", description = "Exports departments to a csv batch file")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successful removal of department with a provided ID"),
-            @ApiResponse(responseCode = "404", description = "No department found for provided ID")})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
-    public void deleteDepartmentById(@PathVariable Long id) {
-        depService.removeDepartmentById(id);
+        @ApiResponse(responseCode = "200", description = "Successfully exported departments to a csv batch file")})
+    @GetMapping("/export")
+    public ResponseEntity<ByteArrayResource> exportDepartments() {
+        return depService.exportDepartmentsToCsv();
     }
 }

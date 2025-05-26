@@ -27,10 +27,7 @@ import java.util.List;
 @Table(name = "students")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "student_code", nullable = false, unique = true)
+    @Column(name = "code", nullable = false, unique = true)
     private Long studentCode;
 
     @OneToMany(
@@ -50,7 +47,7 @@ public class Student {
     @Type(LongArrayType.class)
     private Long[] departmentPreferences;
     @Column(name = "placed_preference_idx")
-    private Integer placedPreferenceIdx;
+    private Integer placedPreferenceIdx = 0;
     @Column(nullable = false)
     private Float cgpa;
     @Column(name = "grade1_result")

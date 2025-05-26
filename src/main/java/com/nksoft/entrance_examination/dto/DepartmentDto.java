@@ -14,8 +14,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DepartmentDto {
-    @Null(message = "Department ID is not to be provided externally")
-    private Long departmentId;
     @NotNull(message = "Department code must be provided")
     private Long departmentCode;
     @NotNull(message = "University ID must be provided")

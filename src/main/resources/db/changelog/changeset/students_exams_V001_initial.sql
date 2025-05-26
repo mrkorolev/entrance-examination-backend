@@ -1,7 +1,6 @@
 CREATE TABLE students (
-    id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    code bigint PRIMARY KEY,
 
-    student_code bigint UNIQUE NOT NULL,
     name varchar(64) NOT NULL,
     email varchar(64) UNIQUE NOT NULL,
     password_encrypted varchar(128) NOT NULL,
@@ -19,7 +18,7 @@ CREATE TABLE students (
 
 CREATE TABLE exam_entries (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    student_id bigint,
+    student_code bigint,
     exam_id bigint,
 
     -- PROD CLAUSES
@@ -33,7 +32,7 @@ CREATE TABLE exam_entries (
     results_received_at timestamp,
 
     -- single registration for each student is allowed per unique exam
-    UNIQUE(student_id, exam_id),
-    FOREIGN KEY(student_id) REFERENCES students(id) ON DELETE CASCADE,
+    UNIQUE(student_code, exam_id),
+    FOREIGN KEY(student_code) REFERENCES students(code) ON DELETE CASCADE,
     FOREIGN KEY(exam_id) REFERENCES exams(id) ON DELETE CASCADE
 );

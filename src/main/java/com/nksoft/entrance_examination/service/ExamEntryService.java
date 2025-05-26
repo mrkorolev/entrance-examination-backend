@@ -32,12 +32,12 @@ public class ExamEntryService {
     }
 
     public ExamEntry registerEntry(ExamEntry toRegister) {
-        validateStudentExists(toRegister.getStudent().getId());
+        validateStudentExists(toRegister.getStudent().getStudentCode());
         validateExamExists(toRegister.getExam().getId());
         ExamEntry registered = examEntryRepository.save(toRegister);
         log.info("Exam entry registered: [examId = {}, studentId = {}]",
                 registered.getExam().getId(),
-                registered.getStudent().getId());
+                registered.getStudent().getStudentCode());
         return registered;
     }
 
@@ -57,7 +57,7 @@ public class ExamEntryService {
 
     private void validateStudentExists(Long id) {
         if (!studentRepository.existsById(id)) {
-            throw new EntityNotFoundException("Student with ID = " + id + " does not exist");
+            throw new EntityNotFoundException("Student with code = " + id + " does not exist");
         }
     }
 

@@ -22,7 +22,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public StudentDto login(@RequestBody LoginDto dto) {
-        log.info("Request login dto: {}", dto);
         Student toLogin = studentService.findStudentByEmail(dto.getEmail(), dto.getPassword());
         return studentMapper.toDto(toLogin);
     }
