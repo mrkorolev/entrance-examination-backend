@@ -32,7 +32,7 @@ public class StudentService {
     private final FileExporter exporter;
 
     @Transactional
-    public Student findStudentByEmail(String email, String password) {
+    public Student authenticateStudent(String email, String password) {
         log.info("Student login: [{}, {}]", email, password);
         Student toLogin = studentRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("Student with email '" + email + "' does not exist"));

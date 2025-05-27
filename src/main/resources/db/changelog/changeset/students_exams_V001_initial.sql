@@ -5,7 +5,7 @@ CREATE TABLE students (
     email varchar(64) UNIQUE NOT NULL,
     password_encrypted varchar(128) NOT NULL,
 
-    department_preferences bigint[10],
+    department_preferences bigint[],
     placed_preference_idx int,
 
     cgpa float NOT NULL,
@@ -15,6 +15,8 @@ CREATE TABLE students (
 
     created_at timestamp NOT NULL
 );
+
+CREATE INDEX student_email_idx ON students(email);
 
 CREATE TABLE exam_entries (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
