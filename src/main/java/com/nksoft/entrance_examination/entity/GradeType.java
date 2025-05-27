@@ -1,18 +1,13 @@
 package com.nksoft.entrance_examination.entity;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-// TODO: consider private lombok constructor
+@RequiredArgsConstructor
 public enum GradeType {
-    GRADE1("TYT", 100),
-    GRADE2("AYT", 120),
-    GRADE3("YDT", 140);
+    GRADE1("TYT"),
+    GRADE2("AYT"),
+    GRADE3("YDT");
     private final String gradeName;
-    private final int totalQuestions;
-
-    GradeType(String gradeName, int totalQuestions) {
-        this.gradeName = gradeName;
-        this.totalQuestions = totalQuestions;
-    }
 }
