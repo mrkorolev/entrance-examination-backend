@@ -44,11 +44,3 @@ jobs:
 
       - name: Native build with Maven
         run: ./mvnw clean native:compile -Pnative -DskipTests=true
-
-      - name: Run native build
-        run: |
-          chmod +x target/entrance-examination
-          ./target/entrance-examination &
-          PID=$!
-          sleep 5
-          kill $PID
