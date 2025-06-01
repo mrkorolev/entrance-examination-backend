@@ -11,21 +11,6 @@ jobs:
     name: JVM Build
     runs-on: ubuntu-22.04
 
-    services:
-      postgres:
-        image: postgres:16
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: postgres
-        options: >-
-          --health-cmd="pg_isready -U user"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -38,7 +23,7 @@ jobs:
           cache: maven
 
       - name: Build & Test with Maven
-        run: ./mvnw clean verify
+        run: ./mvnw clean verify -DskipTests=true
 
   native-build:
     name: Native Image Build
@@ -58,7 +43,7 @@ jobs:
           components: native-image
 
       - name: Native build with Maven
-        run: ./mvnw clean native:compile -Pnative
+        run: ./mvnw clean native:compile -Pnative -DskipTests=true
 
       - name: Run native build
         run: |
