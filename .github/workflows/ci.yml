@@ -47,7 +47,7 @@ jobs:
 
       - name: Run native build
         run: |
-          EXEC=$(find target -maxdepth 1 -type f -executable ! -name "*.jar")
+          EXEC=$(file target/* | grep 'ELF 64-bit' | grep -v '\.so' | cut -d: -f1)
           chmod +x "$EXEC"
           "$EXEC" &
           PID=$!
