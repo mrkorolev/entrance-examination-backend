@@ -1,0 +1,46 @@
+name: Build & Test
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  jvm-build:
+    name: JVM Build
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup for Temurin distribution (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build & Test with Maven
+        run: ./mvnw clean verify
+
+  native-build:
+    name: Native Image Build
+    needs: jvm-build
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup for GraalVM CE distribution (JDK 17)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '17'
+          distribution: 'graalvm-community'
+          cache: maven
+          components: native-image
+
+      - name: Native build with Maven
+        run: ./mvnw clean native:compile -Pnative

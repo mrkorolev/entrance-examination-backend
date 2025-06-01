@@ -22,6 +22,7 @@
 		<springdoc.version>2.5.0</springdoc.version>
 		<docker.plugin.version>1.4.13</docker.plugin.version>
 		<docker.image.prefix>nvkorolev</docker.image.prefix>
+		<graalvm.version></graalvm.version>
 	</properties>
 
 	<dependencies>
@@ -107,7 +108,14 @@
 					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
 						<artifactId>native-maven-plugin</artifactId>
-<!--						<version>0.10.1</version>-->
+						<executions>
+							<execution>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -153,7 +161,6 @@
 						<phase>install</phase>
 						<goals>
 							<goal>build</goal>
-<!--							<goal>push</goal>-->
 						</goals>
 					</execution>
 				</executions>
