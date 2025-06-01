@@ -47,9 +47,8 @@ jobs:
 
       - name: Run native build
         run: |
-          EXEC=$(file target/* | grep 'ELF 64-bit' | grep -v '\.so' | cut -d: -f1)
-          chmod +x "$EXEC"
-          "$EXEC" &
+          chmod +x target/entrance-examination
+          ./target/entrance-examination &
           PID=$!
           sleep 5
           kill $PID
