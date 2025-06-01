@@ -11,8 +11,23 @@ jobs:
     name: JVM Build
     runs-on: ubuntu-22.04
 
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd="pg_isready -U user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup for Temurin distribution (JDK 17)
@@ -31,7 +46,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup for GraalVM CE distribution (JDK 17)
@@ -44,3 +59,11 @@ jobs:
 
       - name: Native build with Maven
         run: ./mvnw clean native:compile -Pnative
+
+      - name: Run native build
+        run: |
+          chmod +x target/*-runner
+          ./target/*-runner &
+          PID=$!
+          sleep 5
+          kill $PID
