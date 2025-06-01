@@ -2,6 +2,7 @@ package com.nksoft.entrance_examination.service;
 
 import com.nksoft.entrance_examination.entity.Department;
 import com.nksoft.entrance_examination.entity.Student;
+import com.nksoft.entrance_examination.entity.StudentStatus;
 import com.nksoft.entrance_examination.repository.DepartmentRepository;
 import com.nksoft.entrance_examination.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,14 +51,15 @@ public class PlacementService {
         Queue<Student> processingQueue = new ArrayDeque<>(students);
         while (!processingQueue.isEmpty()) {
             Student student = processingQueue.poll();
-            if (student.getPlacedPreferenceIdx() == student.getDepartmentPreferences().length) {
+            if (student.getPlacedPreferenceIdx() == student.getPreferredDepartmentIds().length) {
+                student.setStatus(StudentStatus.REJECTED);
                 student.setPlacedPreferenceIdx(-1);
                 continue;
             }
 
             int idx = student.getPlacedPreferenceIdx();
 
-            Long deptId = student.getDepartmentPreferences()[idx];
+            Long deptId = student.getPreferredDepartmentIds()[idx];
             Department department = departmentMap.get(deptId);
 
             float grade = switch (department.getPreferredGrade()) {
@@ -71,11 +73,11 @@ public class PlacementService {
             if (queue.size() < department.getQuota()) {
                 queue.add(new StudentWithScore(student, score));
                 student.setPlacedPreferenceIdx(idx);
+                student.setStatus(StudentStatus.PLACED);
             } else if (queue.peek().score < score) {
                 StudentWithScore removed = queue.poll();
                 removed.student.setPlacedPreferenceIdx(removed.student.getPlacedPreferenceIdx() + 1);
                 processingQueue.add(removed.student);
-
                 queue.add(new StudentWithScore(student, score));
                 student.setPlacedPreferenceIdx(idx);
             } else {
@@ -110,7 +112,7 @@ public class PlacementService {
 
                 reportBuilder.append(grade).append(" ")
                         .append(s.getPlacedPreferenceIdx() + 1).append(" ")
-                        .append(Arrays.asList(s.getDepartmentPreferences()))
+                        .append(Arrays.asList(s.getPreferredDepartmentIds()))
                         .append("\n");
             }
             reportBuilder.append("--------------------------------------------------------------------\n");
@@ -127,7 +129,7 @@ public class PlacementService {
                     .append(s.getGrade2Result()).append(" ")
                     .append(s.getGrade3Result()).append(" ")
                     .append(s.getPlacedPreferenceIdx()).append(" ")
-                    .append(Arrays.asList(s.getDepartmentPreferences()))
+                    .append(Arrays.asList(s.getPreferredDepartmentIds()))
                     .append("\n");
         }
 

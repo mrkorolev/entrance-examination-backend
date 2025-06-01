@@ -13,19 +13,18 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StudentMapper {
+    @Mapping(source = "password", target = "passwordHash")
     @Mapping(source = "registeredAt", target = "createdAt")
     Student toEntity(StudentDto dto);
 
-    @Mapping(source = "departmentPreferences", target = "departmentPreferenceIds")
     @Mapping(source = "examEntries", target = "examEntryIds", qualifiedByName = "toExamEntryIds")
+    @Mapping(source = "passwordHash", target = "password")
     @Mapping(source = "createdAt", target = "registeredAt")
     StudentDto toDto(Student entity);
 
-
-    @Mapping(source = "departmentPreferences", target = "departmentPreferenceIds")
     @Mapping(source = "examEntries", target = "examEntryIds", qualifiedByName = "toExamEntryIds")
+    @Mapping(source = "passwordHash", target = "password", ignore = true)
     @Mapping(source = "createdAt", target = "registeredAt")
-    @Mapping(target = "password", ignore = true)
     @Named("sanitized")
     StudentDto toDtoSanitized(Student entity);
 

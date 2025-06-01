@@ -1,12 +1,13 @@
 CREATE TABLE students (
-    code bigint PRIMARY KEY,
+    student_code bigint PRIMARY KEY,
 
+    status varchar(20) NOT NULL,
     name varchar(64) NOT NULL,
     email varchar(64) UNIQUE NOT NULL,
-    password_encrypted varchar(128) NOT NULL,
+    password_hash varchar(128) NOT NULL,
 
-    department_preferences bigint[],
-    placed_preference_idx int,
+    preferred_dep_ids bigint[],
+    placed_dep_idx int,
 
     cgpa float NOT NULL,
     grade1_result float,
@@ -15,8 +16,6 @@ CREATE TABLE students (
 
     created_at timestamp NOT NULL
 );
-
-CREATE INDEX student_email_idx ON students(email);
 
 CREATE TABLE exam_entries (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -35,6 +34,6 @@ CREATE TABLE exam_entries (
 
     -- single registration for each student is allowed per unique exam
     UNIQUE(student_code, exam_id),
-    FOREIGN KEY(student_code) REFERENCES students(code) ON DELETE CASCADE,
+    FOREIGN KEY(student_code) REFERENCES students(student_code) ON DELETE CASCADE,
     FOREIGN KEY(exam_id) REFERENCES exams(id) ON DELETE CASCADE
 );

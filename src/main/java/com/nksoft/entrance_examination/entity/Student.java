@@ -4,6 +4,8 @@ import com.vladmihalcea.hibernate.type.array.LongArrayType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -25,8 +27,11 @@ import java.util.List;
 @Table(name = "students")
 public class Student {
     @Id
-    @Column(name = "code", nullable = false, unique = true)
+    @Column(name = "student_code", nullable = false, unique = true)
     private Long studentCode;
+
+    @Enumerated(EnumType.STRING)
+    private StudentStatus status;
 
     @OneToMany(
             mappedBy = "student",
@@ -38,13 +43,13 @@ public class Student {
     private String name;
     @Column(length = 64, unique = true, nullable = false)
     private String email;
-    @Column(name = "password_encrypted", length = 64, nullable = false)
-    private String password;
+    @Column(name = "password_hash", length = 64, nullable = false)
+    private String passwordHash;
 
-    @Column(name = "department_preferences", columnDefinition = "bigint[]")
+    @Column(name = "preferred_dep_ids", columnDefinition = "bigint[]")
     @Type(LongArrayType.class)
-    private Long[] departmentPreferences;
-    @Column(name = "placed_preference_idx")
+    private Long[] preferredDepartmentIds;
+    @Column(name = "placed_dep_idx")
     private Integer placedPreferenceIdx = 0;
     @Column(nullable = false)
     private Float cgpa;

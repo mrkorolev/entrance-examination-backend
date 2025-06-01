@@ -1,6 +1,7 @@
 package com.nksoft.entrance_examination.service;
 
 import com.nksoft.entrance_examination.entity.Student;
+import com.nksoft.entrance_examination.entity.StudentStatus;
 import com.nksoft.entrance_examination.file.FileExporter;
 import com.nksoft.entrance_examination.repository.DepartmentRepository;
 import com.nksoft.entrance_examination.repository.StudentRepository;
@@ -36,7 +37,7 @@ public class StudentService {
         log.info("Student login: [{}, {}]", email, password);
         Student toLogin = studentRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("Student with email '" + email + "' does not exist"));
-        validatePasswordsMatch(email, password, toLogin.getPassword());
+        validatePasswordsMatch(email, password, toLogin.getPasswordHash());
         return toLogin;
     }
 
@@ -55,8 +56,9 @@ public class StudentService {
     public Student registerStudent(Student toRegister) {
         validateCodeIsUnique(toRegister.getStudentCode());
         validateEmailDoesntExist(toRegister.getEmail());
-        String encrypted = passwordEncoder.encode(toRegister.getPassword());
-        toRegister.setPassword(encrypted);
+        String encrypted = passwordEncoder.encode(toRegister.getPasswordHash());
+        toRegister.setPasswordHash(encrypted);
+        toRegister.setStatus(StudentStatus.REGISTERED);
 
         Student registered = studentRepository.save(toRegister);
         log.info("Student registered: [{} - {} - {}]",
@@ -117,10 +119,11 @@ public class StudentService {
 
         Student toSave = new Student();
         toSave.setStudentCode(code);
+        toSave.setStatus(StudentStatus.REGISTERED);
         toSave.setName(name);
         toSave.setEmail(code + "@gmail.com");
-        toSave.setPassword(code + "_password");
-        toSave.setDepartmentPreferences(preferences);
+        toSave.setPasswordHash(code + "_password");
+        toSave.setPreferredDepartmentIds(preferences);
         toSave.setCgpa(0.0F);
         toSave.setGrade1Result(grade1);
         toSave.setGrade2Result(grade2);
@@ -133,7 +136,8 @@ public class StudentService {
         Student existing = getByCodeOrThrow(code);
 
         Long[] departmentIdsUpdated = departmentIds.toArray(new Long[0]);
-        existing.setDepartmentPreferences(departmentIdsUpdated);
+        existing.setPreferredDepartmentIds(departmentIdsUpdated);
+        existing.setStatus(StudentStatus.CHOICES_SUBMITTED);
         Student updated = studentRepository.save(existing);
 
         log.info("Updated department preferences for student [code = {}, name: {}]",
@@ -182,7 +186,7 @@ public class StudentService {
                     .append(s.getPlacedPreferenceIdx() != null ? s.getPlacedPreferenceIdx() : "?").append(delimiter);
 
             for (int i = 0; i < 10; i++) {
-                Long depId = s.getDepartmentPreferences()[i];
+                Long depId = s.getPreferredDepartmentIds()[i];
                 row.append(depId == null ? "-" : depId);
                 if (i != 9) {
                     row.append(delimiter);
