@@ -47,8 +47,9 @@ jobs:
 
       - name: Run native build
         run: |
-          chmod +x target/*-runner
-          ./target/*-runner &
+          EXEC=$(find target -maxdepth 1 -type f -executable ! -name "*.jar")
+          chmod +x "$EXEC"
+          "$EXEC" &
           PID=$!
           sleep 5
           kill $PID
