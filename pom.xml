@@ -17,12 +17,13 @@
 
 	<properties>
 		<java.version>17</java.version>
+		<hibernate.version>6.4.4.Final</hibernate.version>
 		<lombok.version>1.18.30</lombok.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<springdoc.version>2.5.0</springdoc.version>
 		<docker.plugin.version>1.4.13</docker.plugin.version>
 		<docker.image.prefix>nvkorolev</docker.image.prefix>
-		<graalvm.version></graalvm.version>
+		<graalvm.plugin.version>0.9.28</graalvm.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -103,16 +104,29 @@
 	<profiles>
 		<profile>
 			<id>native</id>
+			<properties>
+				<spring.aot.enabled>true</spring.aot.enabled>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
 						<artifactId>native-maven-plugin</artifactId>
+						<version>${graalvm.plugin.version}</version>
 						<executions>
 							<execution>
 								<goals>
 									<goal>compile</goal>
 								</goals>
+								<configuration>
+									<buildArgs>
+										<buildArg>--no-fallback</buildArg>
+										<buildArg>--enable-url-protocols=http,https</buildArg>
+										<buildArg>--enable-https</buildArg>
+										<buildArg>--enable-all-security-services</buildArg>
+										<buildArg>--report-unsupported-elements-at-runtime</buildArg>
+									</buildArgs>
+								</configuration>
 								<phase>package</phase>
 							</execution>
 						</executions>
