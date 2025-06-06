@@ -4,7 +4,7 @@ CREATE TABLE students (
     status varchar(20) NOT NULL,
     name varchar(64) NOT NULL,
     email varchar(64) UNIQUE NOT NULL,
-    password_hash varchar(128) NOT NULL,
+    password_hash varchar(255) NOT NULL,
 
     preferred_dep_ids bigint[],
     placed_dep_idx int,

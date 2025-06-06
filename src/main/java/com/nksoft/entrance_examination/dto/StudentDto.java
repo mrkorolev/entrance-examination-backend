@@ -3,6 +3,7 @@ package com.nksoft.entrance_examination.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nksoft.entrance_examination.entity.StudentStatus;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -37,7 +38,7 @@ public class StudentDto {
     @Null(message = "Student's final department placement is not to be provided externally")
     private Integer placedPreferenceIdx;
 
-    @Positive(message = "CGPA should be greater than zero")
+    @Min(value = 0, message = "CGPA minimum value is 0")
     @Max(value = 100, message = "CGPA maximum value is 100")
     private Float cgpa;
     @Null(message = "Student's exam results for grade1 are not to be provided externally")

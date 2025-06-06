@@ -86,7 +86,6 @@
 			<version>${mapstruct.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- TODO: consider adding Tinylog for GraalVM -->
 
 		<!-- Testing -->
 		<dependency>

@@ -43,14 +43,15 @@ public class Student {
     private String name;
     @Column(length = 64, unique = true, nullable = false)
     private String email;
-    @Column(name = "password_hash", length = 64, nullable = false)
+    @Column(name = "password_hash", length = 255, nullable = false)
     private String passwordHash;
 
     @Column(name = "preferred_dep_ids", columnDefinition = "bigint[]")
     @Type(LongArrayType.class)
     private Long[] preferredDepartmentIds;
     @Column(name = "placed_dep_idx")
-    private Integer placedPreferenceIdx = 0;
+    private Integer placedPreferenceIdx;
+
     @Column(nullable = false)
     private Float cgpa;
     @Column(name = "grade1_result")
