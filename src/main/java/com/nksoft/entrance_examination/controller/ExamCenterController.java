@@ -28,6 +28,7 @@ public class ExamCenterController {
     private final ExamCenterService exCtrService;
     private final ExamCenterMapper exCtrMapper;
 
+    // TODO: add pagination, request param for available centers
     @Operation(summary = "Get exam centers", description = "Returns a list of exam centers")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of exam centers"))
     @GetMapping
@@ -52,7 +53,7 @@ public class ExamCenterController {
             @ApiResponse(responseCode = "400", description = "Exam center with provided name already exists")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ExamCenterDto addNewUniversity(@RequestBody ExamCenterDto dto) {
+    public ExamCenterDto addNewCenter(@RequestBody ExamCenterDto dto) {
         ExamCenter toRegister = exCtrMapper.toEntity(dto);
         ExamCenter registered = exCtrService.registerCenter(toRegister);
         return exCtrMapper.toDto(registered);

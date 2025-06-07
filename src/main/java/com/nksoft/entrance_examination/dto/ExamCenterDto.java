@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 @Getter
@@ -20,6 +19,8 @@ public class ExamCenterDto {
     @NotBlank(message = "Exam center name can't be null/empty")
     private String name;
     private String address;
-    @Positive(message = "Exam center capacity should be greater than zero")
-    private Integer capacity;
+    @Positive(message = "Total rooms has to be a greater than zero")
+    private Integer totalRooms = 20;
+    @Positive(message = "Room capacity has to be a greater than zero")
+    private Integer roomCapacity = 15;
 }

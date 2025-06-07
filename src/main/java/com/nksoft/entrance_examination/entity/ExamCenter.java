@@ -36,8 +36,10 @@ public class ExamCenter {
 
     @Column(length = 64, unique = true, nullable = false)
     private String name;
-    @Column(length = 128)
-    private String description;
-    @Column(nullable = false)
-    private int capacity = 100;
+    @Column(nullable = false, length = 128)
+    private String address;
+    @Column(name = "total_rooms", nullable = false)
+    private int totalRooms;
+    @Column(name = "room_capacity", nullable = false)
+    private int roomCapacity;
 }

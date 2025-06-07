@@ -16,6 +16,7 @@ import java.util.List;
 public class ExamCenterService {
     private final ExamCenterRepository exCtrRepository;
 
+    // TODO: modify method to work with controller
     @Transactional(readOnly = true)
     public List<ExamCenter> findCenters() {
         List<ExamCenter> centers = exCtrRepository.findAll();
