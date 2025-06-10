@@ -6,10 +6,11 @@ CREATE TABLE universities (
 );
 
 CREATE TABLE departments (
-    code bigint PRIMARY KEY,
+    department_code bigint PRIMARY KEY,
     university_id bigint,
 
     -- PROD CLAUSE
+--     department_code bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 --     university_id bigint NOT NULL,
     name varchar(64) UNIQUE NOT NULL,
     preferred_grade varchar(6) NOT NULL,
