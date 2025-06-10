@@ -17,23 +17,16 @@ public interface StudentMapper {
     @Mapping(source = "registeredAt", target = "createdAt")
     Student toEntity(StudentDto dto);
 
-    @Mapping(source = "examEntries", target = "examEntryIds", qualifiedByName = "toExamEntryIds")
+    @Mapping(source = "examEntry.id", target = "examEntryId")
     @Mapping(source = "passwordHash", target = "password")
     @Mapping(source = "createdAt", target = "registeredAt")
     StudentDto toDto(Student entity);
 
-    @Mapping(source = "examEntries", target = "examEntryIds", qualifiedByName = "toExamEntryIds")
+    @Mapping(source = "examEntry.id", target = "examEntryId")
     @Mapping(source = "passwordHash", target = "password", ignore = true)
     @Mapping(source = "createdAt", target = "registeredAt")
     @Named("sanitized")
     StudentDto toDtoSanitized(Student entity);
 
     List<StudentDto> toDtoList(List<Student> entities);
-
-    @Named("toExamEntryIds")
-    default List<Long> toExamEntryIds(List<ExamEntry> examEntries) {
-        return examEntries.stream()
-                .map(ExamEntry::getId)
-                .toList();
-    }
 }

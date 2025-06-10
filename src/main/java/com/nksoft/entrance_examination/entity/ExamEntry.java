@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,19 +28,16 @@ public class ExamEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "student_code", nullable = false)
     private Student student;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exam_id", nullable = false)
-    private Exam exam;
 
-    @Column(name = "final_score")
-    private Integer finalScore;
-    @Column(name = "correct_answers")
-    private Integer correctAnswers;
-    @Column(name = "incorrect_answers")
-    private Integer incorrectAnswers;
+    @ManyToOne
+    @JoinColumn(name = "exam_center_id", nullable = false)
+    private ExamCenter exam;
+
+    @Column(name = "seat_number", nullable = false)
+    private int seatNumber;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

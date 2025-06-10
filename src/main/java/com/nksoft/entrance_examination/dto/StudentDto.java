@@ -23,8 +23,8 @@ public class StudentDto {
     @Null(message = "Student status is not to be provided externally")
     private StudentStatus status;
 
-    @Null(message = "Exam entry IDs are not to be provided externally")
-    private List<Long> examEntryIds;
+    @Null(message = "Exam entry ID are not to be provided externally")
+    private Long examEntryId;
 
     @NotBlank(message = "Name can't be null/empty")
     private String name;
