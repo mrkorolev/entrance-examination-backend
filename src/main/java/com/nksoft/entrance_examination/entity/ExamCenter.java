@@ -26,18 +26,11 @@ public class ExamCenter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // save/remove exam in case of ExamCenter save/removal
-    // remove exams from the exam table if exam center is removed
-    @OneToMany(
-            mappedBy = "examCenter",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private List<Exam> exams = new ArrayList<>();
-
     @Column(length = 64, unique = true, nullable = false)
     private String name;
     @Column(nullable = false, length = 128)
     private String address;
+
     @Column(name = "total_rooms", nullable = false)
     private int totalRooms;
     @Column(name = "room_capacity", nullable = false)
