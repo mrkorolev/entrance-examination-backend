@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
 public class ExamDto {
     @Null(message = "Exam ID is not to be provided externally")
     private Long examId;
-    @NotNull(message = "Exam center ID must be provided")
-    private Long examCenterId;
 
     @NotNull(message = "Exam grade type must be provided")
     @Pattern(regexp = "GRADE1|GRADE2|GRADE3", message = "Exam grade type allowed values (might be changed): [GRADE1, GRADE2, GRADE3]")

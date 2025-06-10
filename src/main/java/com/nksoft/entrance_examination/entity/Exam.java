@@ -26,22 +26,22 @@ import java.time.LocalDateTime;
 @Table(name = "exams")
 public class Exam {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exam_center_id", nullable = false)
-    private ExamCenter examCenter;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "grade_type")
-    private GradeType targetGrade;
-    @Column(name = "duration_minutes")
-    private int durationInMinutes;
+    private GradeType gradeType;
 
-    @Column(name = "date_time")
-    private LocalDateTime dateAndTime;
+    @Column(name = "duration_minutes", nullable = false)
+    private int durationInMinutes;
+    @Column(name = "exam_start_time", nullable = false)
+    private LocalDateTime startTime;
     @CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "booklet_a_keys")
+    private String bookletAKeys;
+    @Column(name = "booklet_b_keys")
+    private String bookletBKeys;
+    @Column(name = "booklet_c_keys")
+    private String bookletCKeys;
 }

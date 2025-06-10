@@ -11,13 +11,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ExamMapper {
     @Mapping(source = "examId", target = "id")
-    @Mapping(source = "examCenterId", target = "examCenter.id")
     @Mapping(source = "examGradeType", target = "targetGrade")
     @Mapping(source = "examDateTime", target = "dateAndTime")
     Exam toEntity(ExamDto dto);
 
     @Mapping(source = "id", target = "examId")
-    @Mapping(source = "examCenter.id", target = "examCenterId")
     @Mapping(source = "targetGrade", target = "examGradeType")
     @Mapping(source = "dateAndTime", target = "examDateTime")
     ExamDto toDto(Exam entity);
