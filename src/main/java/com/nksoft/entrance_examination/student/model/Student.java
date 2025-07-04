@@ -27,17 +27,17 @@ public class Student {
     @Id
     @Column(name = "student_code", nullable = false, unique = true)
     private Long studentCode;
-    @OneToOne
-    private ExamEntry examEntry;
+//    @OneToOne
+//    private ExamEntry examEntry;
 
-    @Enumerated(EnumType.STRING)
-    private StudentStatus status;
     @Column(length = 64, nullable = false)
     private String name;
     @Column(length = 64, unique = true, nullable = false)
     private String email;
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+    @Enumerated(EnumType.STRING)
+    private StudentStatus status;
 
     @Column(name = "preferred_dep_ids", columnDefinition = "bigint[]")
     @Type(LongArrayType.class)

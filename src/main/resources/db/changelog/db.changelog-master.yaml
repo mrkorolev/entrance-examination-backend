@@ -4,4 +4,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/changeset/exam_centers_V001.sql
   - include:
-      file: db/changelog/changeset/students_exams_V001.sql
+      file: db/changelog/changeset/students_entries_V001.sql

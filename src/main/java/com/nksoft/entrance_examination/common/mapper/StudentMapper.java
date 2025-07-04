@@ -14,12 +14,12 @@ public interface StudentMapper {
     @Mapping(source = "registeredAt", target = "createdAt")
     Student toEntity(StudentDto dto);
 
-    @Mapping(source = "examEntry.id", target = "examEntryId")
+//    @Mapping(source = "examEntry.id", target = "examEntryId")
     @Mapping(source = "passwordHash", target = "password")
     @Mapping(source = "createdAt", target = "registeredAt")
     StudentDto toDto(Student entity);
 
-    @Mapping(source = "examEntry.id", target = "examEntryId")
+//    @Mapping(source = "examEntry.id", target = "examEntryId")
     @Mapping(source = "passwordHash", target = "password", ignore = true)
     @Mapping(source = "createdAt", target = "registeredAt")
     @Named("sanitized")

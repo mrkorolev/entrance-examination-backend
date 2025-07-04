@@ -1,10 +1,10 @@
 CREATE TABLE students (
     student_code bigint PRIMARY KEY,
 
-    status varchar(20) NOT NULL,
     name varchar(64) NOT NULL,
     email varchar(64) UNIQUE NOT NULL,
     password_hash varchar(255) NOT NULL,
+    status varchar(20) NOT NULL,
 
     preferred_dep_ids bigint[],
     placed_pref_idx int,

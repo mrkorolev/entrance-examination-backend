@@ -1,4 +1,4 @@
-package com.nksoft.entrance_examination.student.repository;
+package com.nksoft.entrance_examination.student;
 
 import com.nksoft.entrance_examination.student.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +15,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Modifying
     @Query("DELETE FROM Student s WHERE s.studentCode = :studentCode")
-    int deleteByIdReturningCount(@Param("id") Long studentCode);
+    int deleteByIdReturningCount(@Param("studentCode") Long studentCode);
 
     Optional<Student> findByEmail(String email);
 

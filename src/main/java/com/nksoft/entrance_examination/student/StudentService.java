@@ -1,9 +1,8 @@
-package com.nksoft.entrance_examination.student.service;
+package com.nksoft.entrance_examination.student;
 
 import com.nksoft.entrance_examination.student.model.StudentStatus;
 import com.nksoft.entrance_examination.common.file.FileExporter;
 import com.nksoft.entrance_examination.student.model.Student;
-import com.nksoft.entrance_examination.student.repository.StudentRepository;
 import com.nksoft.entrance_examination.department.repository.DepartmentRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,15 +28,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StudentService {
-    private final StudentRepository studentRepository;
+    private final StudentRepository repository;
     private final DepartmentRepository depRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder encoder;
     private final FileExporter exporter;
 
     @Transactional
     public Student authenticateStudent(String email, String password) {
         log.info("Student login: [{}, {}]", email, password);
-        Student toLogin = studentRepository.findByEmail(email).orElseThrow(
+        Student toLogin = repository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("Student with email '" + email + "' does not exist"));
         validatePasswordsMatch(email, password, toLogin.getPasswordHash());
         return toLogin;
@@ -45,17 +44,17 @@ public class StudentService {
 
 
     @Transactional(readOnly = true)
-    public List<Student> findStudentsByIds(List<Long> ids) {
-        List<Student> students = studentRepository.findAllById(ids);
+    public List<Student> findStudentsByCodes(List<Long> codes) {
+        List<Student> students = repository.findAllById(codes);
         log.info("Total students found: {}", students.size());
-        return studentRepository.findAllById(ids);
+        return repository.findAllById(codes);
     }
 
     @Transactional(readOnly = true)
     public Page<Student> findStudents(Pageable pageable) {
-        Page<Student> page = studentRepository.findAll(pageable);
+        Page<Student> page = repository.findAll(pageable);
         log.info("Total students found: {}", page.getTotalElements());
-        return studentRepository.findAll(pageable);
+        return repository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
@@ -66,11 +65,11 @@ public class StudentService {
     public Student registerStudent(Student toRegister) {
         validateCodeIsUnique(toRegister.getStudentCode());
         validateEmailDoesntExist(toRegister.getEmail());
-        String encrypted = passwordEncoder.encode(toRegister.getPasswordHash());
+        String encrypted = encoder.encode(toRegister.getPasswordHash());
         toRegister.setPasswordHash(encrypted);
         toRegister.setStatus(StudentStatus.REGISTERED);
 
-        Student registered = studentRepository.save(toRegister);
+        Student registered = repository.save(toRegister);
         log.info("Student registered: [{} - {} - {}]",
                 registered.getStudentCode(),
                 registered.getName(),
@@ -99,12 +98,12 @@ public class StudentService {
                 validateCodeIsUnique(toSave.getStudentCode());
                 toInsert.add(toSave);
                 if (toInsert.size() == batchSize) {
-                    studentRepository.saveAll(toInsert);
+                    repository.saveAll(toInsert);
                     toInsert.clear();
                 }
             }
             if (!toInsert.isEmpty()) {
-                studentRepository.saveAll(toInsert);
+                repository.saveAll(toInsert);
             }
             log.info("Batch insert complete: {} new students", lineNumber);
         }
@@ -148,7 +147,7 @@ public class StudentService {
         Long[] departmentIdsUpdated = departmentIds.toArray(new Long[0]);
         existing.setPreferredDepartmentIds(departmentIdsUpdated);
         existing.setStatus(StudentStatus.CHOICES_SUBMITTED);
-        Student updated = studentRepository.save(existing);
+        Student updated = repository.save(existing);
 
         log.info("Updated department preferences for student [code = {}, name: {}]",
                 updated.getStudentCode(), updated.getName());
@@ -157,7 +156,7 @@ public class StudentService {
 
     @Transactional
     public void removeStudentByCode(Long code) {
-        int count = studentRepository.deleteByIdReturningCount(code);
+        int count = repository.deleteByIdReturningCount(code);
         if (count == 0) {
             throw new EntityNotFoundException("Student with code " + code + " does not exist");
         }
@@ -165,7 +164,7 @@ public class StudentService {
     }
 
     public ResponseEntity<ByteArrayResource> exportStudentsToCsv() {
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = repository.findAll();
         String delimiter = ",";
         StringBuilder header = new StringBuilder();
         header.append("student_code").append(delimiter)
@@ -213,18 +212,18 @@ public class StudentService {
     }
 
     private Student getByCodeOrThrow(Long code) {
-        return studentRepository.findById(code).orElseThrow(
+        return repository.findById(code).orElseThrow(
                 () -> new EntityNotFoundException("Student with code = " + code + " does not exist"));
     }
 
     private void validateCodeIsUnique(Long code) {
-        if (studentRepository.existsById(code)) {
+        if (repository.existsById(code)) {
             throw new EntityExistsException("Student with code = " + code + " already exists");
         }
     }
 
     private void validateEmailDoesntExist(String email) {
-        if (studentRepository.existsByEmail(email)) {
+        if (repository.existsByEmail(email)) {
             throw new EntityExistsException("Student with email '" + email + "' already exists");
         }
     }
@@ -243,7 +242,7 @@ public class StudentService {
     }
 
     private void validatePasswordsMatch(String email, String provided, String actualEncoded) {
-        if (!passwordEncoder.matches(provided, actualEncoded)) {
+        if (!encoder.matches(provided, actualEncoded)) {
             String msg = String.format("Provided incorrect password [%s], for student with email: %s)", provided, email);
             throw new IllegalArgumentException(msg);
         }

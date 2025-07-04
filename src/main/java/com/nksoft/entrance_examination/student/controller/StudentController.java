@@ -3,11 +3,12 @@ package com.nksoft.entrance_examination.student.controller;
 import com.nksoft.entrance_examination.common.mapper.StudentMapper;
 import com.nksoft.entrance_examination.student.model.Student;
 import com.nksoft.entrance_examination.student.dto.StudentDto;
-import com.nksoft.entrance_examination.student.service.StudentService;
+import com.nksoft.entrance_examination.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
@@ -41,13 +42,13 @@ public class StudentController {
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of students"))
     @GetMapping
     public ResponseEntity<?> getStudents(
-            @RequestParam(required = false) List<Long> studentIds,
+            @RequestParam(required = false) List<Long> studentCodes,
             @PageableDefault(size = 20, sort = "studentCode") Pageable pageable) {
-        if (studentIds == null || studentIds.isEmpty()) {
+        if (studentCodes == null || studentCodes.isEmpty()) {
             Page<Student> foundStudents = service.findStudents(pageable);
             return ResponseEntity.ok(foundStudents.map(mapper::toDto));
         } else {
-            List<Student> foundStudents = service.findStudentsByIds(studentIds);
+            List<Student> foundStudents = service.findStudentsByCodes(studentCodes);
             return ResponseEntity.ok(mapper.toDtoList(foundStudents));
         }
     }
@@ -57,7 +58,7 @@ public class StudentController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of student with a provided code"),
             @ApiResponse(responseCode = "404", description = "No student found for provided code")})
     @GetMapping("/{code}")
-    public StudentDto getStudentById(@PathVariable Long code) {
+    public StudentDto getStudentByCode(@PathVariable Long code) {
         Student found = service.findStudentByCode(code);
         return mapper.toDto(found);
     }
@@ -68,8 +69,7 @@ public class StudentController {
             @ApiResponse(responseCode = "400", description = "Student with provided email already exists")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public StudentDto addNewStudent(@RequestBody StudentDto dto) {
-        System.out.println("Registration endpoint hit!");
+    public StudentDto addNewStudent(@Valid @RequestBody StudentDto dto) {
         Student toRegister = mapper.toEntity(dto);
         Student registered = service.registerStudent(toRegister);
         return mapper.toDto(registered);
