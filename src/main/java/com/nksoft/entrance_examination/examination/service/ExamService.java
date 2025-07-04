@@ -1,0 +1,65 @@
+package com.nksoft.entrance_examination.examination.service;
+
+import com.nksoft.entrance_examination.examination.model.Exam;
+import com.nksoft.entrance_examination.examination.repository.ExamCenterRepository;
+import com.nksoft.entrance_examination.examination.repository.ExamRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ExamService {
+    private final ExamRepository examRepository;
+    private final ExamCenterRepository exCtrRepository;
+
+    @Transactional(readOnly = true)
+    public List<Exam> findExams() {
+        List<Exam> exams = examRepository.findAll();
+        log.info("Total exams found: {}", exams.size());
+        return exams;
+    }
+
+    @Transactional(readOnly = true)
+    public Exam findExamById(Long id) {
+        return getByIdOrThrow(id);
+    }
+
+    public Exam registerExam(Exam toRegister) {
+        validateExamTimeOverlap(toRegister);
+        Exam registered = examRepository.save(toRegister);
+        log.info("Exam registered: [{} - starting at {}]",
+                registered.getGradeType(),
+                registered.getStartTime());
+        return registered;
+    }
+
+    @Transactional
+    public void removeExamById(Long id) {
+        int count = examRepository.deleteByIdReturningCount(id);
+        if (count == 0) {
+            throw new EntityNotFoundException("Exam with ID = " + id + " does not exist");
+        }
+        log.info("Exam with ID = {} removed", id);
+    }
+
+    private Exam getByIdOrThrow(Long id) {
+        return examRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Exam with ID = " + id + " does not exist"));
+    }
+
+    private void validateExamCenterExists(Long id) {
+        if (!exCtrRepository.existsById(id)) {
+            throw new EntityNotFoundException("Exam center with ID = " + id + " does not exist");
+        }
+    }
+
+    // TODO: consider capacity & date_time based validation
+    private void validateExamTimeOverlap(Exam toRegister) {
+        // to follow...
+    }
+}
