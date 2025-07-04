@@ -1,15 +1,17 @@
-package com.nksoft.entrance_examination.service;
+package com.nksoft.entrance_examination.student.service;
 
-import com.nksoft.entrance_examination.entity.Student;
-import com.nksoft.entrance_examination.entity.StudentStatus;
-import com.nksoft.entrance_examination.file.FileExporter;
-import com.nksoft.entrance_examination.repository.DepartmentRepository;
-import com.nksoft.entrance_examination.repository.StudentRepository;
+import com.nksoft.entrance_examination.student.model.StudentStatus;
+import com.nksoft.entrance_examination.common.file.FileExporter;
+import com.nksoft.entrance_examination.student.model.Student;
+import com.nksoft.entrance_examination.student.repository.StudentRepository;
+import com.nksoft.entrance_examination.department.repository.DepartmentRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,11 +43,19 @@ public class StudentService {
         return toLogin;
     }
 
+
     @Transactional(readOnly = true)
-    public List<Student> findStudents() {
-        List<Student> students = studentRepository.findAll();
+    public List<Student> findStudentsByIds(List<Long> ids) {
+        List<Student> students = studentRepository.findAllById(ids);
         log.info("Total students found: {}", students.size());
-        return students;
+        return studentRepository.findAllById(ids);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Student> findStudents(Pageable pageable) {
+        Page<Student> page = studentRepository.findAll(pageable);
+        log.info("Total students found: {}", page.getTotalElements());
+        return studentRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)

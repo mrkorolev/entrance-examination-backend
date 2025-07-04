@@ -1,15 +1,18 @@
-package com.nksoft.entrance_examination.controller;
+package com.nksoft.entrance_examination.student.controller;
 
-import com.nksoft.entrance_examination.dto.StudentDto;
-import com.nksoft.entrance_examination.entity.Student;
-import com.nksoft.entrance_examination.mapper.StudentMapper;
-import com.nksoft.entrance_examination.service.StudentService;
+import com.nksoft.entrance_examination.common.mapper.StudentMapper;
+import com.nksoft.entrance_examination.student.model.Student;
+import com.nksoft.entrance_examination.student.dto.StudentDto;
+import com.nksoft.entrance_examination.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -32,16 +34,22 @@ import java.util.List;
 @RequestMapping("/students")
 @Tag(name  = "Student", description = "Operations regarding student management")
 public class StudentController {
-    private final StudentService studentService;
-    private final StudentMapper studentMapper;
+    private final StudentService service;
+    private final StudentMapper mapper;
 
-    // TODO: add pagination, potentially ~10^6 records
-    @Operation(summary = "Get students", description = "Returns a list of students")
+    @Operation(summary = "Get students", description = "Returns a list of students (based on ids or pagination provided)")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of students"))
     @GetMapping
-    public List<StudentDto> getStudents() {
-        List<Student> foundStudents = studentService.findStudents();
-        return studentMapper.toDtoList(foundStudents);
+    public ResponseEntity<?> getStudents(
+            @RequestParam(required = false) List<Long> studentIds,
+            @PageableDefault(size = 20, sort = "studentCode") Pageable pageable) {
+        if (studentIds == null || studentIds.isEmpty()) {
+            Page<Student> foundStudents = service.findStudents(pageable);
+            return ResponseEntity.ok(foundStudents.map(mapper::toDto));
+        } else {
+            List<Student> foundStudents = service.findStudentsByIds(studentIds);
+            return ResponseEntity.ok(mapper.toDtoList(foundStudents));
+        }
     }
 
     @Operation(summary = "Get student by code", description = "Returns a single student with a unique code")
@@ -50,8 +58,8 @@ public class StudentController {
             @ApiResponse(responseCode = "404", description = "No student found for provided code")})
     @GetMapping("/{code}")
     public StudentDto getStudentById(@PathVariable Long code) {
-        Student found = studentService.findStudentByCode(code);
-        return studentMapper.toDto(found);
+        Student found = service.findStudentByCode(code);
+        return mapper.toDto(found);
     }
 
     @Operation(summary = "Register student", description = "Registers and returns a new student")
@@ -62,9 +70,9 @@ public class StudentController {
     @PostMapping
     public StudentDto addNewStudent(@RequestBody StudentDto dto) {
         System.out.println("Registration endpoint hit!");
-        Student toRegister = studentMapper.toEntity(dto);
-        Student registered = studentService.registerStudent(toRegister);
-        return studentMapper.toDto(registered);
+        Student toRegister = mapper.toEntity(dto);
+        Student registered = service.registerStudent(toRegister);
+        return mapper.toDto(registered);
     }
 
     @Operation(summary = "Update student's department preferences",
@@ -78,8 +86,8 @@ public class StudentController {
     @PutMapping("/{code}")
     public StudentDto setStudentDepartmentPreferences(@PathVariable Long code,
                                                       @RequestBody List<Long> departmentIds) {
-        Student updated = studentService.updateDepartmentPreferences(code, departmentIds);
-        return studentMapper.toDto(updated);
+        Student updated = service.updateDepartmentPreferences(code, departmentIds);
+        return mapper.toDto(updated);
     }
 
     @Operation(summary = "Remove student", description = "Removes a single student with a unique code")
@@ -89,7 +97,7 @@ public class StudentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{code}")
     public void deleteStudentById(@PathVariable Long code) {
-        studentService.removeStudentByCode(code);
+        service.removeStudentByCode(code);
     }
 
     @Operation(summary = "Student batch insert", description = "Registers students based on delimiter & info provided in a batch file")
@@ -104,7 +112,7 @@ public class StudentController {
     public ResponseEntity<?> uploadStudentsBatch(@RequestBody MultipartFile file,
                                                  @RequestParam(defaultValue = " ") String delimiter,
                                                  @RequestParam(defaultValue = "50") int batchSize) throws IOException {
-        studentService.processBatchFile(file, delimiter, batchSize);
+        service.processBatchFile(file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed students batch file");
     }
 
@@ -113,6 +121,6 @@ public class StudentController {
             @ApiResponse(responseCode = "200", description = "Successfully exported students to a csv batch file")})
     @GetMapping("/export")
     public ResponseEntity<ByteArrayResource> exportStudents() {
-        return studentService.exportStudentsToCsv();
+        return service.exportStudentsToCsv();
     }
 }
