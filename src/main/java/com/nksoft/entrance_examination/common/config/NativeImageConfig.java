@@ -3,6 +3,8 @@ package com.nksoft.entrance_examination.common.config;
 import com.nksoft.entrance_examination.common.config.hints.HibernateHints;
 import com.nksoft.entrance_examination.common.config.hints.LiquibaseHints;
 import com.nksoft.entrance_examination.common.advice.ErrorResponse;
+import com.nksoft.entrance_examination.common.validator.classes.DecimalPrecisionValidator;
+import com.nksoft.entrance_examination.common.validator.classes.EnumValidator;
 import com.nksoft.entrance_examination.department.dto.DepartmentDto;
 import com.nksoft.entrance_examination.examination.dto.ExamCenterDto;
 import com.nksoft.entrance_examination.examination.dto.ExamDto;
@@ -19,7 +21,8 @@ import org.springframework.context.annotation.ImportRuntimeHints;
         UniversityDto.class, DepartmentDto.class,
         ExamCenterDto.class, ExamDto.class,
         ExamEntryDto.class, StudentDto.class, LoginDto.class,
-        ErrorResponse.class
+        ErrorResponse.class,
+        EnumValidator.class, DecimalPrecisionValidator.class
 })
 @ImportRuntimeHints({ LiquibaseHints.class, HibernateHints.class })
 public class NativeImageConfig {}

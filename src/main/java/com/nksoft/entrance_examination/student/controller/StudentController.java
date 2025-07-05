@@ -42,7 +42,7 @@ public class StudentController {
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of students"))
     @GetMapping
     public ResponseEntity<?> getStudents(
-            @RequestParam(required = false) List<Long> studentCodes,
+            @RequestParam(name = "student-codes", required = false) List<Long> studentCodes,
             @PageableDefault(size = 20, sort = "studentCode") Pageable pageable
     ) {
         if (studentCodes == null || studentCodes.isEmpty()) {

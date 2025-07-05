@@ -1,15 +1,20 @@
 package com.nksoft.entrance_examination.examination.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,9 +27,16 @@ public class ExamCenter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 64, unique = true, nullable = false)
+    @OneToMany(
+            mappedBy = "examCenter",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<ExamEntry> examEntries;
+
+    @Column(length = 64, nullable = false, unique = true)
     private String name;
-    @Column(nullable = false, length = 128)
+    @Column(length = 128, nullable = false)
     private String address;
 
     @Column(name = "total_rooms", nullable = false)

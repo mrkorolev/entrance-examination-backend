@@ -1,8 +1,8 @@
 package com.nksoft.entrance_examination.common.mapper;
 
 import com.nksoft.entrance_examination.examination.dto.ExamCenterDto;
-import com.nksoft.entrance_examination.examination.model.Exam;
 import com.nksoft.entrance_examination.examination.model.ExamCenter;
+import com.nksoft.entrance_examination.examination.model.ExamEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -15,15 +15,15 @@ public interface ExamCenterMapper {
     ExamCenter toEntity(ExamCenterDto dto);
 
     @Mapping(source = "id", target = "examCenterId")
-    @Mapping(source = "exams", target = "examIds", qualifiedByName = "toExamIds")
+    @Mapping(source = "examEntries", target = "examEntryIds", qualifiedByName = "toExamEntryIds")
     ExamCenterDto toDto(ExamCenter entity);
 
     List<ExamCenterDto> toDtoList(List<ExamCenter> entities);
 
-    @Named("toExamIds")
-    default List<Long> toExamIds(List<Exam> exams) {
-        return exams.stream()
-                .map(Exam::getId)
+    @Named("toExamEntryIds")
+    default List<Long> toExamEntryIds(List<ExamEntry> examEntries) {
+        return examEntries.stream()
+                .map(ExamEntry::getId)
                 .toList();
     }
 }
