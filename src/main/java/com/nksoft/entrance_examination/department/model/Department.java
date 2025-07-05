@@ -30,11 +30,11 @@ public class Department {
     @JoinColumn(name = "university_id")
     private University university;
 
+    @Column(length = 64, nullable = false, unique = true)
+    private String name;
     @Enumerated(EnumType.STRING)
     @Column(name = "preferred_grade", nullable = false)
     private GradeType preferredGrade;
     @Column(nullable = false)
-    private String name;
-    @Column(nullable = false)
-    private int quota = 30;
+    private int quota;
 }

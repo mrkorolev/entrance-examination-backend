@@ -1,7 +1,7 @@
 package com.nksoft.entrance_examination.student.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nksoft.entrance_examination.common.validator.DecimalPrecision;
+import com.nksoft.entrance_examination.common.validator.annotations.DecimalPrecision;
 import com.nksoft.entrance_examination.student.model.StudentStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;

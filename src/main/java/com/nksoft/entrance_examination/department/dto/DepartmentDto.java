@@ -1,9 +1,9 @@
 package com.nksoft.entrance_examination.department.dto;
 
+import com.nksoft.entrance_examination.common.validator.annotations.ValidEnum;
 import com.nksoft.entrance_examination.examination.model.GradeType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +18,12 @@ public class DepartmentDto {
     @NotNull(message = "University ID must be provided")
     private Long universityId;
 
-    @NotNull(message = "Preferred department grade must be provided")
-    @Pattern(regexp = "GRADE1|GRADE2|GRADE3",
-            message = "Exam grade type allowed values (might be changed): [GRADE1, GRADE2, GRADE3]")
-    private GradeType preferredGrade;
     @NotBlank(message = "Department name can't be null/empty")
     private String name;
-    @Positive(message = "Department capacity must be greater than zero")
+    @NotNull(message = "Preferred department grade must be provided")
+    @ValidEnum(enumClass = GradeType.class)
+    private GradeType preferredGrade;
+    @NotNull(message = "Department quota must be provided")
+    @Positive(message = "Department quota must be greater than zero")
     private Integer quota;
 }

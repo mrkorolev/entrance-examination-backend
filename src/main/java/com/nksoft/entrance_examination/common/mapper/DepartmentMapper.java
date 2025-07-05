@@ -10,7 +10,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DepartmentMapper {
     @Mapping(source = "universityId", target = "university.id")
-    @Mapping(source = "quota", target = "quota", defaultValue = "30")
     Department toEntity(DepartmentDto dto);
 
     @Mapping(source = "university.id", target = "universityId")

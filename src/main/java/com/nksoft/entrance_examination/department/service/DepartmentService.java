@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +28,22 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DepartmentService {
-    private final DepartmentRepository depRepository;
+    private final DepartmentRepository repository;
     private final UniversityRepository uniRepository;
     private final FileExporter exporter;
 
     @Transactional(readOnly = true)
-    public List<Department> findDepartments() {
-        List<Department> departments = depRepository.findAll();
-        log.info("Total departments found: {}", departments.size());
-        return depRepository.findAll();
+    public Page<Department> findDepartments(Pageable pageable) {
+        Page<Department> page = repository.findAll(pageable);
+        log.info("Total departments found: {}", page.getTotalElements());
+        return page;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Department> findDepartmentsByCodes(List<Long> codes) {
+        List<Department> departments = repository.findAllById(codes);
+        log.info("Total students found: {}", departments.size());
+        return departments;
     }
 
     @Transactional(readOnly = true)
@@ -47,7 +56,7 @@ public class DepartmentService {
         validateDepartmentNameUnique(toRegister.getName());
         validateUniversityExists(toRegister.getUniversity().getId());
 
-        Department registered = depRepository.save(toRegister);
+        Department registered = repository.save(toRegister);
 
         log.info("Registered department: code = {}, name = {}",
                 registered.getDepartmentCode(),
@@ -71,17 +80,17 @@ public class DepartmentService {
                 lineNumber++;
                 if (line.trim().isEmpty()) {
                     throw new IllegalArgumentException("Empty are not allowed in a batch file");
-                };
+                }
                 Department toSave = parseToDepartment(line, delimiter);
                 validateCodeIsUnique(toSave.getDepartmentCode());
                 toInsert.add(toSave);
                 if (toInsert.size() == batchSize) {
-                    depRepository.saveAll(toInsert);
+                    repository.saveAll(toInsert);
                     toInsert.clear();
                 }
             }
             if (!toInsert.isEmpty()) {
-                depRepository.saveAll(toInsert);
+                repository.saveAll(toInsert);
             }
             log.info("Batch insert complete: {} new departments", lineNumber);
         }
@@ -105,7 +114,7 @@ public class DepartmentService {
 
     @Transactional
     public void removeDepartmentById(Long code) {
-        int count = depRepository.deleteByIdReturningCount(code);
+        int count = repository.deleteByIdReturningCount(code);
         if (count == 0) {
             throw new EntityNotFoundException("Department with code = " + code + " does not exist");
         }
@@ -113,12 +122,12 @@ public class DepartmentService {
     }
 
     private Department getByCodeOrThrow(Long code) {
-        return depRepository.findById(code).orElseThrow(
+        return repository.findById(code).orElseThrow(
                 () -> new EntityNotFoundException("Department with code = " + code + " does not exist"));
     }
 
     private void validateCodeIsUnique(Long departmentCode) {
-        if (depRepository.existsById(departmentCode)) {
+        if (repository.existsById(departmentCode)) {
             throw new EntityExistsException("Department with code = " + departmentCode + " already exists");
         }
     }
@@ -130,7 +139,7 @@ public class DepartmentService {
     }
 
     private void validateDepartmentNameUnique(String departmentName) {
-        if (depRepository.existsByName(departmentName)) {
+        if (repository.existsByName(departmentName)) {
             throw new IllegalStateException("Department with name = " + departmentName + " already exists");
         }
     }
@@ -142,7 +151,7 @@ public class DepartmentService {
     }
 
     public ResponseEntity<ByteArrayResource> exportDepartmentsToCsv() {
-        List<Department> departments = depRepository.findAll();
+        List<Department> departments = repository.findAll();
         String delimiter = ",";
         StringBuilder header = new StringBuilder();
         header.append("dep_code").append(delimiter)

@@ -43,7 +43,8 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<?> getStudents(
             @RequestParam(required = false) List<Long> studentCodes,
-            @PageableDefault(size = 20, sort = "studentCode") Pageable pageable) {
+            @PageableDefault(size = 20, sort = "studentCode") Pageable pageable
+    ) {
         if (studentCodes == null || studentCodes.isEmpty()) {
             Page<Student> foundStudents = service.findStudents(pageable);
             return ResponseEntity.ok(foundStudents.map(mapper::toDto));

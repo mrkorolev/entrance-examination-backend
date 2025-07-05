@@ -8,8 +8,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,16 +35,23 @@ import java.util.List;
 @RequestMapping("/departments")
 @Tag(name = "Department", description = "Operations related to department management")
 public class DepartmentController {
-    private final DepartmentService depService;
-    private final DepartmentMapper depMapper;
+    private final DepartmentService service;
+    private final DepartmentMapper mapper;
 
-    // TODO: add pagination, potentially ~10^3 records
     @Operation(summary = "Get departments", description = "Returns a list of departments")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of departments"))
     @GetMapping
-    public List<DepartmentDto> getDepartments() {
-        List<Department> foundDepartments = depService.findDepartments();
-        return depMapper.toDtoList(foundDepartments);
+    public ResponseEntity<?> getDepartments(
+            @RequestParam(required = false) List<Long> departmentCodes,
+            @PageableDefault(size = 20, sort = "departmentCode") Pageable pageable
+    ) {
+        if (departmentCodes == null || departmentCodes.isEmpty()) {
+            Page<Department> foundDepartments = service.findDepartments(pageable);
+            return ResponseEntity.ok(foundDepartments.map(mapper::toDto));
+        } else {
+            List<Department> foundDepartments = service.findDepartmentsByCodes(departmentCodes);
+            return ResponseEntity.ok(mapper.toDtoList(foundDepartments));
+        }
     }
 
     @Operation(summary = "Get department by code", description = "Returns a single department with a unique code")
@@ -49,8 +60,8 @@ public class DepartmentController {
             @ApiResponse(responseCode = "404", description = "No department found for provided code")})
     @GetMapping("/{code}")
     public DepartmentDto getDepartmentById(@PathVariable Long code) {
-        Department found = depService.findDepartmentByCode(code);
-        return depMapper.toDto(found);
+        Department found = service.findDepartmentByCode(code);
+        return mapper.toDto(found);
     }
 
     @Operation(summary = "Register department", description = "Registers and returns a new department")
@@ -60,10 +71,10 @@ public class DepartmentController {
             @ApiResponse(responseCode = "404", description = "University with ID provided in the dto doesn't exist")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public DepartmentDto createDepartment(@RequestBody DepartmentDto dto) {
-        Department toRegister = depMapper.toEntity(dto);
-        Department registered = depService.registerDepartment(toRegister);
-        return depMapper.toDto(registered);
+    public DepartmentDto createDepartment(@Valid @RequestBody DepartmentDto dto) {
+        Department toRegister = mapper.toEntity(dto);
+        Department registered = service.registerDepartment(toRegister);
+        return mapper.toDto(registered);
     }
 
     @Operation(summary = "Remove department", description = "Removes a single department with a unique code")
@@ -73,7 +84,7 @@ public class DepartmentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{code}")
     public void deleteDepartmentById(@PathVariable Long code) {
-        depService.removeDepartmentById(code);
+        service.removeDepartmentById(code);
     }
 
     @Operation(summary = "Department batch insert", description = "Registers departments based delimiter & info provided in a batch file")
@@ -89,7 +100,7 @@ public class DepartmentController {
     public ResponseEntity<?> uploadDepartmentsBatch(@RequestBody MultipartFile file,
                                                     @RequestParam(defaultValue = " ") String delimiter,
                                                     @RequestParam(defaultValue = "25") int batchSize) throws IOException {
-        depService.processBatchFile(file, delimiter, batchSize);
+        service.processBatchFile(file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed departments the batch file");
     }
 
@@ -98,6 +109,6 @@ public class DepartmentController {
         @ApiResponse(responseCode = "200", description = "Successfully exported departments to a csv batch file")})
     @GetMapping("/export")
     public ResponseEntity<ByteArrayResource> exportDepartments() {
-        return depService.exportDepartmentsToCsv();
+        return service.exportDepartmentsToCsv();
     }
 }
