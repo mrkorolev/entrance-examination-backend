@@ -1,5 +1,6 @@
-package com.nksoft.entrance_examination.common.validator;
+package com.nksoft.entrance_examination.common.validator.classes;
 
+import com.nksoft.entrance_examination.common.validator.annotations.DecimalPrecision;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

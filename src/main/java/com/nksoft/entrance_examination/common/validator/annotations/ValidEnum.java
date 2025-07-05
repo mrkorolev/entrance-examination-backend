@@ -1,5 +1,6 @@
-package com.nksoft.entrance_examination.common.validator;
+package com.nksoft.entrance_examination.common.validator.annotations;
 
+import com.nksoft.entrance_examination.common.validator.classes.EnumValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,13 +11,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = DecimalPrecisionValidator.class)
-@Target({ElementType.FIELD})
+@Constraint(validatedBy = EnumValidator.class)
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DecimalPrecision {
-    String message() default "Number must have at most {maxDecimalPlaces} decimal places";
+public @interface ValidEnum {
+    String message() default "Invalid value";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-
-    int maxDecimalPlaces() default 1;
+    Class<? extends Enum<?>> enumClass();
 }
