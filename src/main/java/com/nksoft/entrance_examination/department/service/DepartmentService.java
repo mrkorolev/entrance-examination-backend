@@ -10,8 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,17 +31,16 @@ public class DepartmentService {
     private final FileExporter exporter;
 
     @Transactional(readOnly = true)
-    public Page<Department> findDepartments(Pageable pageable) {
-        Page<Department> page = repository.findAll(pageable);
-        log.info("Total departments found: {}", page.getTotalElements());
-        return page;
+    public List<Department> findDepartments() {
+        List<Department> departments = repository.findAll();
+        log.info("Total departments found: {}", departments.size());
+        return departments;
     }
 
     @Transactional(readOnly = true)
     public List<Department> findDepartmentsByCodes(List<Long> codes) {
-        List<Department> departments = repository.findAllById(codes);
-        log.info("Total students found: {}", departments.size());
-        return departments;
+        validateAllDepartmentsExist(codes);
+        return repository.findAllById(codes);
     }
 
     @Transactional(readOnly = true)
@@ -126,30 +123,6 @@ public class DepartmentService {
                 () -> new EntityNotFoundException("Department with code = " + code + " does not exist"));
     }
 
-    private void validateCodeIsUnique(Long departmentCode) {
-        if (repository.existsById(departmentCode)) {
-            throw new EntityExistsException("Department with code = " + departmentCode + " already exists");
-        }
-    }
-
-    private void validateUniversityExists(Long universityId) {
-        if (!uniRepository.existsById(universityId)) {
-            throw new EntityNotFoundException("University with ID = " + universityId + " does not exist");
-        }
-    }
-
-    private void validateDepartmentNameUnique(String departmentName) {
-        if (repository.existsByName(departmentName)) {
-            throw new IllegalStateException("Department with name = " + departmentName + " already exists");
-        }
-    }
-
-    private void validateFileNotEmpty(MultipartFile file) {
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("Provided file is empty, check file contents and try again");
-        }
-    }
-
     public ResponseEntity<ByteArrayResource> exportDepartmentsToCsv() {
         List<Department> departments = repository.findAll();
         String delimiter = ",";
@@ -172,5 +145,36 @@ public class DepartmentService {
                 .contentLength(resource.contentLength())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
+    }
+
+    private void validateCodeIsUnique(Long departmentCode) {
+        if (repository.existsById(departmentCode)) {
+            throw new EntityExistsException("Department with code = " + departmentCode + " already exists");
+        }
+    }
+
+    private void validateAllDepartmentsExist(List<Long> departmentCodes) {
+        List<Long> missingDepartmentCodes = repository.findMissingDepartmentCodes(departmentCodes);
+        if (!missingDepartmentCodes.isEmpty()) {
+            throw new EntityNotFoundException("Some departments for provided codes do not exist: " + missingDepartmentCodes);
+        }
+    }
+
+    private void validateUniversityExists(Long universityId) {
+        if (!uniRepository.existsById(universityId)) {
+            throw new EntityNotFoundException("University with ID = " + universityId + " does not exist");
+        }
+    }
+
+    private void validateDepartmentNameUnique(String departmentName) {
+        if (repository.existsByName(departmentName)) {
+            throw new IllegalStateException("Department with name = " + departmentName + " already exists");
+        }
+    }
+
+    private void validateFileNotEmpty(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Provided file is empty, check file contents and try again");
+        }
     }
 }

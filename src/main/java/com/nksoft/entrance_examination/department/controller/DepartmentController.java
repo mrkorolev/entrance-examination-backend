@@ -41,17 +41,9 @@ public class DepartmentController {
     @Operation(summary = "Get departments", description = "Returns a list of departments")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of departments"))
     @GetMapping
-    public ResponseEntity<?> getDepartments(
-            @RequestParam(required = false) List<Long> departmentCodes,
-            @PageableDefault(size = 20, sort = "departmentCode") Pageable pageable
-    ) {
-        if (departmentCodes == null || departmentCodes.isEmpty()) {
-            Page<Department> foundDepartments = service.findDepartments(pageable);
-            return ResponseEntity.ok(foundDepartments.map(mapper::toDto));
-        } else {
-            List<Department> foundDepartments = service.findDepartmentsByCodes(departmentCodes);
-            return ResponseEntity.ok(mapper.toDtoList(foundDepartments));
-        }
+    public List<DepartmentDto> getDepartments() {
+        List<Department> foundDepartments = service.findDepartments();
+        return mapper.toDtoList(foundDepartments);
     }
 
     @Operation(summary = "Get department by code", description = "Returns a single department with a unique code")
@@ -99,7 +91,7 @@ public class DepartmentController {
     @PostMapping("/testing-batch-upload")
     public ResponseEntity<?> uploadDepartmentsBatch(@RequestBody MultipartFile file,
                                                     @RequestParam(defaultValue = " ") String delimiter,
-                                                    @RequestParam(defaultValue = "25") int batchSize) throws IOException {
+                                                    @RequestParam(name = "batch-size", defaultValue = "25") int batchSize) throws IOException {
         service.processBatchFile(file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed departments the batch file");
     }

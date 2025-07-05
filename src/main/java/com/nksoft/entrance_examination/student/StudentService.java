@@ -228,10 +228,10 @@ public class StudentService {
         }
     }
 
-    private void validateAllDepartmentsExist(List<Long> ids) {
-        List<Long> missingDepartmentIds = depRepository.findMissingDepartmentIds(ids);
-        if (!missingDepartmentIds.isEmpty()) {
-            throw new EntityNotFoundException("Some departments for provided codes do not exist: " + missingDepartmentIds);
+    private void validateAllDepartmentsExist(List<Long> departmentCodes) {
+        List<Long> missingDepartmentCodes = depRepository.findMissingDepartmentCodes(departmentCodes);
+        if (!missingDepartmentCodes.isEmpty()) {
+            throw new EntityNotFoundException("Some departments for provided codes do not exist: " + missingDepartmentCodes);
         }
     }
 
