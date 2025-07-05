@@ -20,6 +20,7 @@ public class UniversityService {
     public List<University> findUniversities() {
         List<University> universities = uniRepository.findAll();
         log.info("Total universities found: {}", universities.size());
+
         return universities;
     }
 
