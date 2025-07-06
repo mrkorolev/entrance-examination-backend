@@ -12,4 +12,9 @@ public interface ExamEntryRepository extends JpaRepository<ExamEntry, Long> {
     @Modifying
     @Query("DELETE FROM ExamEntry etr WHERE etr.id = :id")
     int deleteByIdReturningCount(@Param("id") Long id);
+
+
+    int currentRegistrationsCountForCenter(Long centerId);
+
+    boolean existsByStudent_StudentCode(Long studentCode);
 }

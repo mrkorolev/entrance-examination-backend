@@ -34,7 +34,7 @@ public class ExamEntry {
 
     @ManyToOne
     @JoinColumn(name = "exam_center_id", nullable = false)
-    private ExamCenter exam;
+    private ExamCenter examCenter;
 
     @Column(name = "seat_number", nullable = false)
     private int seatNumber;
@@ -42,7 +42,4 @@ public class ExamEntry {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "results_received_at")
-    private LocalDateTime resultsReceivedAt;
 }

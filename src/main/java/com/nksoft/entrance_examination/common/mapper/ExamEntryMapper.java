@@ -12,12 +12,12 @@ import java.util.List;
 public interface ExamEntryMapper {
     @Mapping(source = "examEntryId", target = "id")
     @Mapping(source = "studentCode", target = "student.studentCode")
-    @Mapping(source = "examId", target = "exam.id")
+    @Mapping(source = "examCenterId", target = "examCenter.id")
     ExamEntry toEntity(ExamEntryDto dto);
 
     @Mapping(source = "id", target = "examEntryId")
     @Mapping(source = "student.studentCode", target = "studentCode")
-    @Mapping(source = "exam.id", target = "examId")
+    @Mapping(source = "examCenter.id", target = "examCenterId")
     ExamEntryDto toDto(ExamEntry examEntry);
 
     List<ExamEntryDto> toDtoList(List<ExamEntry> entities);

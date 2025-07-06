@@ -18,20 +18,12 @@ public class ExamEntryDto {
     @NotNull(message = "Student code must be provided")
     private Long studentCode;
     @NotNull(message = "Exam ID must be provided")
-    private Long examId;
+    private Long examCenterId;
 
-    @Null(message = "Final score is not to be provided externally")
-    private Integer finalScore;
-    @Null(message = "Correct answers is not to be provided externally")
-    private Integer correctAnswers;
-    @Null(message = "Incorrect answers is not to be provided externally")
-    private Integer incorrectAnswers;
+    @Null(message = "Seat number must not be provided externally")
+    private Integer seatNumber;
 
-    @Null(message = "Registration date is not to be provided externally")
+    @Null(message = "Registration date must not be provided externally")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
-
-    @Null(message= "Results dater is not to be provided externally")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime resultsReceivedAt;
 }
