@@ -206,8 +206,8 @@ public class StudentService {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=students.csv")
+                .header(HttpHeaders.CONTENT_TYPE, "text/csv")
                 .contentLength(resource.contentLength())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
 

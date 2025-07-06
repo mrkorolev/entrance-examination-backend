@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,15 +26,15 @@ import java.util.List;
 @RequestMapping("/exams")
 @Tag(name = "Exam", description = "Operations related to exam management")
 public class ExamController {
-    private final ExamService examService;
-    private final ExamMapper examMapper;
+    private final ExamService service;
+    private final ExamMapper mapper;
 
     @Operation(summary = "Get exams", description = "Returns a list of exams")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of exams"))
     @GetMapping
     public List<ExamDto> getExams() {
-        List<Exam> foundExams = examService.findExams();
-        return examMapper.toDtoList(foundExams);
+        List<Exam> foundExams = service.findExams();
+        return mapper.toDtoList(foundExams);
     }
 
     @Operation(summary = "Get exam by ID", description = "Returns a single exam with a unique ID")
@@ -42,8 +43,8 @@ public class ExamController {
             @ApiResponse(responseCode = "404", description = "No exam found for provided ID")})
     @GetMapping("/{id}")
     public ExamDto getExamById(@PathVariable Long id) {
-        Exam found = examService.findExamById(id);
-        return examMapper.toDto(found);
+        Exam found = service.findExamById(id);
+        return mapper.toDto(found);
     }
 
     @Operation(summary = "Register exam", description = "Registers and returns a new exam")
@@ -53,10 +54,10 @@ public class ExamController {
             @ApiResponse(responseCode = "404", description = "Exam center for provided ID doesn't exist")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ExamDto addNewExam(@RequestBody ExamDto dto) {
-        Exam toRegister = examMapper.toEntity(dto);
-        Exam registered = examService.registerExam(toRegister);
-        return examMapper.toDto(registered);
+    public ExamDto addNewExam(@Valid @RequestBody ExamDto dto) {
+        Exam toRegister = mapper.toEntity(dto);
+        Exam registered = service.registerExam(toRegister);
+        return mapper.toDto(registered);
     }
 
     @Operation(summary = "Remove exam", description = "Removes a single exam with a unique ID")
@@ -66,6 +67,6 @@ public class ExamController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteExamById(@PathVariable Long id) {
-        examService.removeExamById(id);
+        service.removeExamById(id);
     }
 }

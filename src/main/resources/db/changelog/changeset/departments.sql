@@ -1,10 +1,3 @@
-CREATE TABLE universities (
-    id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-
-    name varchar(64) UNIQUE NOT NULL,
-    description varchar(128)
-);
-
 CREATE TABLE departments (
     department_code bigint PRIMARY KEY,
     university_id bigint,
