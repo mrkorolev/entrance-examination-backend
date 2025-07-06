@@ -27,8 +27,8 @@ public class Student {
     @Id
     @Column(name = "student_code", nullable = false, unique = true)
     private Long studentCode;
-//    @OneToOne
-//    private ExamEntry examEntry;
+    @OneToOne(mappedBy = "student")
+    private ExamEntry examEntry;
 
     @Column(length = 64, nullable = false)
     private String name;

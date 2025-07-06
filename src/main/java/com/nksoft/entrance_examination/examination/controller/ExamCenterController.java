@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +31,6 @@ public class ExamCenterController {
     private final ExamCenterService service;
     private final ExamCenterMapper mapper;
 
-    // TODO: request param for available centers
     @Operation(summary = "Get exam centers", description = "Returns a list of exam centers")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of exam centers"))
     @GetMapping
@@ -68,5 +69,13 @@ public class ExamCenterController {
     @DeleteMapping("/{id}")
     public void deleteCenterById(@PathVariable Long id) {
         service.removeCenterById(id);
+    }
+
+    @Operation(summary = "Export exam centers", description = "Exports exam centers to a csv batch file")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successfully exported exam centers to a csv batch file")})
+    @GetMapping("/export")
+    public ResponseEntity<ByteArrayResource> exportCenters() {
+        return service.exportCentersToCsv();
     }
 }

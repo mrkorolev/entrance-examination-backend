@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,7 +32,7 @@ public class ExamCenter {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<ExamEntry> examEntries;
+    private List<ExamEntry> examEntries = new ArrayList<>();;
 
     @Column(length = 64, nullable = false, unique = true)
     private String name;
