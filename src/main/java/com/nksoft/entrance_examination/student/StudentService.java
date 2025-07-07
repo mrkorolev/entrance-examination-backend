@@ -54,7 +54,7 @@ public class StudentService {
     public Page<Student> findStudents(Pageable pageable) {
         Page<Student> page = repository.findAll(pageable);
         log.info("Total students found: {}", page.getTotalElements());
-        return repository.findAll(pageable);
+        return page;
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +92,7 @@ public class StudentService {
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.trim().isEmpty()) {
-                    throw new IllegalArgumentException("Empty are not allowed in a batch file");
+                    throw new IllegalArgumentException("Empty lines are not allowed in a batch file");
                 }
                 Student toSave = parseToStudent(line, delimiter);
                 validateCodeIsUnique(toSave.getStudentCode());

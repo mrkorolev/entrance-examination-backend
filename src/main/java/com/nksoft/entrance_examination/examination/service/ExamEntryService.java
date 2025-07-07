@@ -53,7 +53,7 @@ public class ExamEntryService {
         synchronized (lock) {
             ExamCenter center = getCenterByIdOrThrow(toRegister.getExamCenter().getId());
             int capacity = center.getTotalRooms() * center.getRoomCapacity();
-            int registrations = repository.currentRegistrationsCountForCenter(center.getId());
+            int registrations = repository.countByExamCenter_Id(center.getId());
 
             validateCapacityNotExceeded(center.getId(), capacity, registrations);
             int seatNumber = registrations + 1;

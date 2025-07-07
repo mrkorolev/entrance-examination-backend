@@ -8,8 +8,9 @@ CREATE TABLE exam_results (
     correct int NOT NULL,
     incorrect int NOT NULL,
     unanswered int NOT NULL,
-    net_score float NOT NULL,
-    normalized_score float NOT NULL,
+    net_score float,
+    rescaled_score float,
+    final_score float,
     created_at timestamp NOT NULL,
 
     UNIQUE(exam_entry_id, exam_id),

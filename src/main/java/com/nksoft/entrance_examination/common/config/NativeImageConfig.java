@@ -15,14 +15,16 @@ import com.nksoft.entrance_examination.department.dto.UniversityDto;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportRuntimeHints;
+import org.springframework.data.domain.PageImpl;
 
 @Configuration
-@RegisterReflectionForBinding({
-        UniversityDto.class, DepartmentDto.class,
-        ExamCenterDto.class, ExamDto.class,
-        ExamEntryDto.class, StudentDto.class, LoginDto.class,
-        ErrorResponse.class,
-        EnumValidator.class, DecimalPrecisionValidator.class
-})
-@ImportRuntimeHints({ LiquibaseHints.class, HibernateHints.class })
-public class NativeImageConfig {}
+    @RegisterReflectionForBinding({
+            UniversityDto.class, DepartmentDto.class,
+            ExamCenterDto.class, ExamDto.class,
+            ExamEntryDto.class, StudentDto.class, LoginDto.class,
+            ErrorResponse.class,
+            EnumValidator.class, DecimalPrecisionValidator.class,
+            PageImpl.class
+    })
+    @ImportRuntimeHints({ LiquibaseHints.class, HibernateHints.class })
+    public class NativeImageConfig {}

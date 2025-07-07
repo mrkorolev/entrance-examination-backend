@@ -57,11 +57,11 @@ public class ExamCenterService {
         List<ExamCenter> centers = repository.findAll();
         String delimiter = ",";
         StringBuilder header = new StringBuilder();
-        header.append("id").append(delimiter)
-                .append("name").append(delimiter)
-                .append("total_rooms").append(delimiter)
-                .append("room_capacity").append(delimiter)
-                .append("address");
+        header.append("Center ID").append(delimiter)
+                .append("Center Name").append(delimiter)
+                .append("Total Rooms").append(delimiter)
+                .append("Room Capacity").append(delimiter)
+                .append("Address");
 
         ByteArrayResource resource = exporter.exportToCsv(header.toString(), centers, c -> {
             StringBuilder row = new StringBuilder();
