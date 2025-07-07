@@ -81,6 +81,7 @@ public class ExamResultService {
                 }
                 ExamResult toSave = parseToResult(line, delimiter);
                 toSave.setExam(exam);
+                evaluateResult(lineNumber, toSave, bookletKeys);
                 results.add(toSave);
                 if (results.size() == batchSize) {
                     repository.saveAll(results);
@@ -129,6 +130,38 @@ public class ExamResultService {
         result.setRawAnswers(rawAnswers);
         result.setBookletType(bt);
         return result;
+    }
+
+    private void evaluateResult(int lineNumber,
+                                ExamResult result,
+                                Map<BookletType, String> bookletAnswers) {
+        String answerKeys = bookletAnswers.get(result.getBookletType());
+        String studentKeys = result.getRawAnswers();
+        if (answerKeys.length() != studentKeys.length()) {
+            throw new IllegalArgumentException("Mismatched lengths: answer key and student answers [line ]" + lineNumber);
+        }
+
+        int correct = 0;
+        int incorrect = 0;
+        int blank = 0;
+        for (int i = 0; i < studentKeys.length(); i++) {
+            char studentAnswer = studentKeys.charAt(i);
+            char correctAnswer = answerKeys.charAt(i);
+
+            if (studentAnswer == '*') {
+                blank++;
+            } else if (studentAnswer == correctAnswer) {
+                correct++;
+            } else {
+                incorrect++;
+            }
+        }
+
+        float score = (float) (correct - (incorrect / 4.0));
+        result.setCorrect(correct);
+        result.setIncorrect(incorrect);
+        result.setUnanswered(blank);
+        result.setNetScore(score < 0 ? 0 : score);
     }
 
     public ResponseEntity<ByteArrayResource> exportResultsToCsv() {
