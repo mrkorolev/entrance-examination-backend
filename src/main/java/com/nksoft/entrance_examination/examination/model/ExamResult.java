@@ -49,7 +49,7 @@ public class ExamResult {
 
     @Column(name = "net_score")
     private Float netScore;
-    @Column(name = "rescaled_score")
+    @Column(name = "normalized_score")
     private Float normalizedScore;
     @Column(name = "final_score")
     private Float finalScore;

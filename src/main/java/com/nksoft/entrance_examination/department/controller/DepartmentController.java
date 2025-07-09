@@ -88,7 +88,7 @@ public class DepartmentController {
             - error happened while parsing the file (e.g. file format/delimiter is invalid)"""),
             @ApiResponse(responseCode = "404", description = "University with ID provided in the dto doesn't exist"),
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
-    @PostMapping("/testing-batch-upload")
+    @PostMapping("/batch-upload")
     public ResponseEntity<?> uploadDepartmentsBatch(@RequestBody MultipartFile file,
                                                     @RequestParam(defaultValue = " ") String delimiter,
                                                     @RequestParam(name = "batch-size", defaultValue = "25") int batchSize) throws IOException {

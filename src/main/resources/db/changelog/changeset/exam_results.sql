@@ -9,7 +9,7 @@ CREATE TABLE exam_results (
     incorrect int NOT NULL,
     unanswered int NOT NULL,
     net_score float,
-    rescaled_score float,
+    normalized_score float,
     final_score float,
     created_at timestamp NOT NULL,
 

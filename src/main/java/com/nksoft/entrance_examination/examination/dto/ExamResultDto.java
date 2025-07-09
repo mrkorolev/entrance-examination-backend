@@ -22,7 +22,7 @@ public class ExamResultDto {
     private int incorrectCount;
     private int unansweredCount;
     private Float netScore;
-    private Float rescaledScore;
+    private Float normalizedScore;
     private Float finalScore;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdDate;
