@@ -1,13 +1,19 @@
 package com.nksoft.entrance_examination.placement;
 
 import com.nksoft.entrance_examination.department.model.Department;
+import com.nksoft.entrance_examination.examination.model.Exam;
+import com.nksoft.entrance_examination.examination.model.ExamResult;
+import com.nksoft.entrance_examination.examination.repository.ExamRepository;
+import com.nksoft.entrance_examination.examination.repository.ExamResultRepository;
 import com.nksoft.entrance_examination.student.model.Student;
 import com.nksoft.entrance_examination.student.model.StudentStatus;
 import com.nksoft.entrance_examination.department.repository.DepartmentRepository;
-import com.nksoft.entrance_examination.student.repository.StudentRepository;
+import com.nksoft.entrance_examination.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
@@ -27,12 +33,28 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PlacementService {
-
-    private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
+    private final StudentRepository studentRepository;
+    private final ExamResultRepository examResultRepository;
+    private final ExamRepository examRepository;
+    private final PlacementResultRepository repository;
 
     @Transactional
-    public ByteArrayResource runPlacement() {
+    public ResponseEntity<ByteArrayResource> runPlacement() {
+        Map<Exam, List<ExamResult>> resultsMap = examResultRepository.findAll().stream()
+                .collect(Collectors.groupingBy(ExamResult::getExam));
+        for (Exam e : resultsMap.keySet()) {
+            List<ExamResult> results = resultsMap.get(e);
+            float mean = calculateMeanForResults(results);
+            float sd = calculateSdForResults(results, mean);
+            normalizeAndRescaleResults(results, mean, sd);
+            e.setMean(mean);
+            e.setStandardDeviation(sd);
+            examResultRepository.saveAll(results);
+        }
+        examRepository.saveAll(resultsMap.keySet());
+
+
         List<Student> students = studentRepository.findAll();
         List<Department> departmentList = departmentRepository.findAll();
 
@@ -90,21 +112,25 @@ public class PlacementService {
         log.info("Placement completed for {} students", students.size());
 
         StringBuilder reportBuilder = new StringBuilder();
-        for (Department department : departmentList) {
-            reportBuilder.append(department.getDepartmentCode()).append(" ")
-                    .append(department.getName()).append(" ")
-                    .append(department.getPreferredGrade().ordinal() + 1).append(" ")
-                    .append(department.getQuota()).append("\n\n");
+        for (Department d : departmentList) {
+            reportBuilder.append(d.getDepartmentCode()).append(" ")
+                    .append(d.getName()).append(" ")
+                    .append(d.getPreferredGrade().ordinal() + 1).append(" ")
+                    .append(d.getQuota()).append("\n\n");
 
-            Queue<StudentWithScore> placedStudentsQueue = departmentQueues.get(department.getDepartmentCode());
+            Queue<StudentWithScore> placedStudentsQueue = departmentQueues.get(d.getDepartmentCode());
             List<StudentWithScore> placedStudentsPerDepartment = new ArrayList<>(placedStudentsQueue);
             placedStudentsPerDepartment.sort(Comparator.comparingDouble((StudentWithScore s) -> s.score).reversed());
+
+            // TODO: extract the file export logic somewhere else
+            int rank = 0;
+            List<PlacementResult> placements = new ArrayList<>();
             for (StudentWithScore sws : placedStudentsPerDepartment) {
                 Student s = sws.student;
                 reportBuilder
                         .append(s.getStudentCode()).append(" ")
                         .append(s.getName()).append(" ");
-                float grade = switch (department.getPreferredGrade()) {
+                float grade = switch (d.getPreferredGrade()) {
                     case GRADE1 -> s.getGrade1Result();
                     case GRADE2 -> s.getGrade2Result();
                     case GRADE3 -> s.getGrade3Result();
@@ -114,7 +140,15 @@ public class PlacementService {
                         .append(s.getPlacedPreferenceIdx() + 1).append(" ")
                         .append(Arrays.asList(s.getPreferredDepartmentIds()))
                         .append("\n");
+
+                rank++;
+                PlacementResult result = new PlacementResult();
+                result.setStudent(s);
+                result.setDepartment(d);
+                result.setRank(rank);
+                placements.add(result);
             }
+            repository.saveAll(placements);
             reportBuilder.append("--------------------------------------------------------------------\n");
         }
 
@@ -133,7 +167,40 @@ public class PlacementService {
                     .append("\n");
         }
 
-        return new ByteArrayResource(reportBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        ByteArrayResource reportFile = new ByteArrayResource(
+                reportBuilder.toString().getBytes(StandardCharsets.UTF_8)
+        );
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=placements.txt")
+                .header(HttpHeaders.CONTENT_TYPE, "text/csv")
+                .contentLength(reportFile.contentLength())
+                .body(reportFile);
+    }
+
+    private void normalizeAndRescaleResults(List<ExamResult> results, float mean, float sd) {
+        results.forEach(r -> {
+            float rawScore = r.getNetScore();
+            float normalized = 50 + (rawScore - mean) * (10 / sd);
+            float rescaled = 10 * normalized + 300;
+            r.setNormalizedScore(normalized);
+            r.setFinalScore(rescaled);
+        });
+    }
+
+    private float calculateMeanForResults(List<ExamResult> examResults) {
+        return (float)examResults.stream()
+                .mapToDouble(ExamResult::getNetScore)
+                .average()
+                .orElseThrow(() -> new IllegalStateException("Could not calculate mean for results"));
+    }
+
+    private float calculateSdForResults(List<ExamResult> examResults, float mean) {
+        double variance = examResults.stream()
+                .mapToDouble(er -> Math.pow(er.getNetScore() - mean, 2))
+                .average()
+                .orElseThrow(() -> new IllegalStateException("Could not calculate standard deviation for results"));
+        return (float)Math.sqrt(variance);
     }
 
     private record StudentWithScore(Student student, double score) { }
