@@ -25,6 +25,19 @@ jobs:
       - name: Build & Test with Maven
         run: ./mvnw clean verify -DskipTests=true
 
+      - name: Cache Sonar packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+
+      - name: SonarCloud Scan
+        if: contains(github.event.head_commit.message, '[sonarqube]')
+        run: ./mvnw sonar:sonar -Dsonar.login=$SONAR_TOKEN
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
   native-build:
     name: Native Image Build
     needs: jvm-build

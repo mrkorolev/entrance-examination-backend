@@ -109,7 +109,7 @@ public class StudentController {
             - provided student file is empty"
             - error happened while parsing the file (e.g. file format/delimiter is invalid)"""),
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
-    @PostMapping("/testing-batch-upload")
+    @PostMapping("/batch-upload")
     public ResponseEntity<?> uploadStudentsBatch(@RequestBody MultipartFile file,
                                                  @RequestParam(defaultValue = " ") String delimiter,
                                                  @RequestParam(defaultValue = "50") int batchSize) throws IOException {
