@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ExamResultMapper {
     @Mapping(source = "id", target = "resultId")
-    @Mapping(source = "examEntry.student.studentCode", target = "studentCode")
+    @Mapping(source = "examEntry.student.id", target = "studentId")
     @Mapping(source = "examEntry.id", target = "examEntryId")
     @Mapping(source = "exam.id", target = "examId")
     @Mapping(source = "correct", target = "correctCount")

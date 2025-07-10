@@ -29,10 +29,11 @@ public class ExamCenter {
 
     @OneToMany(
             mappedBy = "examCenter",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<ExamEntry> examEntries = new ArrayList<>();;
+    private List<ExamEntry> examEntries = new ArrayList<>();
+    // TODO: check LAZY
 
     @Column(length = 64, nullable = false, unique = true)
     private String name;

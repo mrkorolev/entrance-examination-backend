@@ -24,11 +24,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.Arrays.stream;
 
@@ -183,7 +181,7 @@ public class ExamResultService {
         ByteArrayResource resource = exporter.exportToCsv(header.toString(), results, r -> {
             StringBuilder row = new StringBuilder();
             Student s = r.getExamEntry().getStudent();
-            row.append(s.getStudentCode()).append(delimiter)
+            row.append(s.getId()).append(delimiter)
                     .append(s.getName()).append(delimiter)
                     .append(s.getEmail()).append(delimiter)
                     .append(r.getExam().getGradeType()).append(delimiter)
@@ -206,7 +204,7 @@ public class ExamResultService {
     }
 
     private ExamEntry getEntryByStudentCodeOrElseThrow(Long studentCode) {
-        return entryRepository.findByStudent_StudentCode(studentCode)
+        return entryRepository.findByStudent_Id(studentCode)
                 .orElseThrow(() -> new IllegalArgumentException("No entry found for student code: " + studentCode));
     }
 

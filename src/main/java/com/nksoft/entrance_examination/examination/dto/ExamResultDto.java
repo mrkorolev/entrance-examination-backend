@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ExamResultDto {
     private Long resultId;
-    private Long studentCode;
+    private Long studentId;
     private Long examEntryId;
     private Long examId;
     private BookletType bookletType;

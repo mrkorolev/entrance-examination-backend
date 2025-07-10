@@ -29,10 +29,10 @@ public class ExamResult {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "exam_entry_id")
+    @JoinColumn(name = "exam_entry_id", nullable = false)
     private ExamEntry examEntry;
     @ManyToOne
-    @JoinColumn(name = "exam_id")
+    @JoinColumn(name = "exam_id", nullable = false)
     private Exam exam;
 
     @Enumerated(EnumType.STRING)

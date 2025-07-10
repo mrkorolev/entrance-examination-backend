@@ -17,7 +17,7 @@ public interface ExamEntryRepository extends JpaRepository<ExamEntry, Long> {
 
     int countByExamCenter_Id(Long centerId);
 
-    boolean existsByStudent_StudentCode(Long studentCode);
+    boolean existsByStudent_Id(Long studentId);
 
-    Optional<ExamEntry> findByStudent_StudentCode(Long studentCode);
+    Optional<ExamEntry> findByStudent_Id(Long studentId);
 }

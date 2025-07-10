@@ -29,7 +29,7 @@ public class ExamEntry {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "student_code", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     @ManyToOne

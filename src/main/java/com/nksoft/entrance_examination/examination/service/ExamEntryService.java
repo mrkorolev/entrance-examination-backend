@@ -46,8 +46,8 @@ public class ExamEntryService {
 
     @Transactional
     public ExamEntry registerEntry(ExamEntry toRegister) {
-        validateStudentExists(toRegister.getStudent().getStudentCode());
-        validateStudentNotAlreadyRegistered(toRegister.getStudent().getStudentCode());
+        validateStudentExists(toRegister.getStudent().getId());
+        validateStudentNotAlreadyRegistered(toRegister.getStudent().getId());
         Object lock = centerLocks.computeIfAbsent(toRegister.getExamCenter().getId(), id -> new Object());
 
         synchronized (lock) {
@@ -61,7 +61,7 @@ public class ExamEntryService {
             ExamEntry registered = repository.save(toRegister);
             log.info("Exam entry registered: [examId = {}, studentId = {}, seatNumber = {}]",
                     registered.getExamCenter().getId(),
-                    registered.getStudent().getStudentCode(),
+                    registered.getStudent().getId(),
                     registered.getSeatNumber());
             return registered;
         }
@@ -99,7 +99,7 @@ public class ExamEntryService {
     }
 
     private void validateStudentNotAlreadyRegistered(Long studentCode) {
-        if (repository.existsByStudent_StudentCode(studentCode)) {
+        if (repository.existsByStudent_Id(studentCode)) {
             throw new IllegalStateException("Student with code = " + studentCode + " already has an exam entry");
         }
     }

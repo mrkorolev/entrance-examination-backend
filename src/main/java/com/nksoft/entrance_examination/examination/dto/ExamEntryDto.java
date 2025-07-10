@@ -16,7 +16,7 @@ public class ExamEntryDto {
     @Null(message = "Exam entry ID is not to be provided externally")
     private Long examEntryId;
     @NotNull(message = "Student code must be provided")
-    private Long studentCode;
+    private Long studentId;
     @NotNull(message = "Exam ID must be provided")
     private Long examCenterId;
 
