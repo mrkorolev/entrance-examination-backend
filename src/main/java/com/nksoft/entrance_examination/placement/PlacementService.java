@@ -73,6 +73,9 @@ public class PlacementService {
         Queue<Student> processingQueue = new ArrayDeque<>(students);
         while (!processingQueue.isEmpty()) {
             Student student = processingQueue.poll();
+            if (student.getPlacedPreferenceIdx() == null) {
+                student.setPlacedPreferenceIdx(0);
+            }
             if (student.getPlacedPreferenceIdx() == student.getPreferredDepartmentIds().length) {
                 student.setStatus(StudentStatus.REJECTED);
                 student.setPlacedPreferenceIdx(-1);
