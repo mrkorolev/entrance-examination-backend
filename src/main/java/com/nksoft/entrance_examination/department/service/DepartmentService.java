@@ -40,7 +40,8 @@ public class DepartmentService {
 
     @Transactional(readOnly = true)
     public List<Department> findDepartmentsByIds(List<Long> codes) {
-        validateAllDepartmentsExist(codes);
+        List<Department> departments = repository.findAllById(codes);
+        validateAllDepartmentsExist(codes, departments);
         return repository.findAllById(codes);
     }
 
@@ -154,10 +155,13 @@ public class DepartmentService {
         }
     }
 
-    private void validateAllDepartmentsExist(List<Long> departmentCodes) {
-        List<Long> missingDepartmentCodes = repository.findMissingDepartmentIds(departmentCodes);
-        if (!missingDepartmentCodes.isEmpty()) {
-            throw new EntityNotFoundException("Some departments for provided codes do not exist: " + missingDepartmentCodes);
+    private void validateAllDepartmentsExist(List<Long> ids, List<Department> departments) {
+        List<Long> missingIds = departments.stream()
+                .map(Department::getId)
+                .filter(id -> !ids.contains(id))
+                .toList();
+        if (!missingIds.isEmpty()) {
+            throw new EntityNotFoundException("Some departments for provided ids do not exist: " + missingIds);
         }
     }
 

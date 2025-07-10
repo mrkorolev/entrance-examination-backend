@@ -39,7 +39,9 @@ public class DepartmentController {
     private final DepartmentMapper mapper;
 
     @Operation(summary = "Get departments", description = "Returns a list of departments if department IDs were provided (otherwise returns a Page)")
-    @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of departments (Page of DTO list)"))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of departments (Page of DTO list)"),
+            @ApiResponse(responseCode = "404", description = "Some departments for the provided IDs do not exist")})
     @GetMapping
     public ResponseEntity<?> getDepartments(
             @RequestParam(name = "department-ids", required = false) List<Long> ids,
@@ -56,7 +58,7 @@ public class DepartmentController {
 
     @Operation(summary = "Get department by ID", description = "Returns a single department with a unique ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of department with a provided ID"),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of department for a provided ID"),
             @ApiResponse(responseCode = "404", description = "No department found for provided ID")})
     @GetMapping("/{id}")
     public DepartmentDto getDepartmentById(@PathVariable Long id) {
@@ -77,14 +79,14 @@ public class DepartmentController {
         return mapper.toDto(registered);
     }
 
-    @Operation(summary = "Remove department", description = "Removes a single department with a unique code")
+    @Operation(summary = "Remove department", description = "Removes a single department with a unique ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successful removal of department with a provided code"),
-            @ApiResponse(responseCode = "404", description = "No department found for provided code")})
+            @ApiResponse(responseCode = "204", description = "Successful removal of department for a provided ID"),
+            @ApiResponse(responseCode = "404", description = "No department found for provided ID")})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{code}")
-    public void deleteDepartmentById(@PathVariable Long code) {
-        service.removeDepartmentById(code);
+    @DeleteMapping("/{id}")
+    public void deleteDepartmentById(@PathVariable Long id) {
+        service.removeDepartmentById(id);
     }
 
     @Operation(summary = "Department batch insert", description = "Registers departments based on delimiter & info provided in a batch file")
@@ -96,15 +98,16 @@ public class DepartmentController {
             - error happened while parsing the file (e.g. file format/delimiter is invalid)"""),
             @ApiResponse(responseCode = "404", description = "University with ID provided in the dto doesn't exist"),
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
-    @PostMapping("/batch-upload")
-    public ResponseEntity<?> uploadDepartmentsBatch(@RequestBody MultipartFile file,
-                                                    @RequestParam(defaultValue = " ") String delimiter,
-                                                    @RequestParam(name = "batch-size", defaultValue = "25") int batchSize) throws IOException {
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/import")
+    public ResponseEntity<?> importDepartments(@RequestBody MultipartFile file,
+                                               @RequestParam(defaultValue = " ") String delimiter,
+                                               @RequestParam(name = "batch-size", defaultValue = "25") int batchSize) throws IOException {
         service.processBatchFile(file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed departments batch file");
     }
 
-    @Operation(summary = "Export departments", description = "Exports departments to a csv batch file")
+    @Operation(summary = "Export departments", description = "Exports departments to a csv file")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully exported departments to departments.csv")})
     @GetMapping("/export")
