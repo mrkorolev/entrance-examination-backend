@@ -14,8 +14,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean existsByEmail(String email);
 
     @Modifying
-    @Query("DELETE FROM Student s WHERE s.studentCode = :studentCode")
-    int deleteByIdReturningCount(@Param("studentCode") Long studentCode);
+    @Query("DELETE FROM Student s WHERE s.id = :id")
+    int deleteByIdReturningCount(@Param("id") Long id);
 
     Optional<Student> findByEmail(String email);
 

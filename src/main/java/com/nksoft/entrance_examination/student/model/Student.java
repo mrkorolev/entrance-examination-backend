@@ -2,6 +2,7 @@ package com.nksoft.entrance_examination.student.model;
 
 import com.nksoft.entrance_examination.examination.model.ExamEntry;
 import com.vladmihalcea.hibernate.type.array.LongArrayType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,10 +26,10 @@ import java.time.LocalDateTime;
 @Table(name = "students")
 public class Student {
     @Id
-    @Column(name = "student_code", nullable = false, unique = true)
-    private Long studentCode;
-    @OneToOne(mappedBy = "student")
+    private Long id;
+    @OneToOne(mappedBy = "student", cascade = CascadeType.REMOVE)
     private ExamEntry examEntry;
+    // TODO: check for recursion in Jackson serialization
 
     @Column(length = 64, nullable = false)
     private String name;

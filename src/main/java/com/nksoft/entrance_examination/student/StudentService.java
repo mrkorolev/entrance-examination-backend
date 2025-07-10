@@ -12,7 +12,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,18 +36,18 @@ public class StudentService {
     @Transactional
     public Student authenticateStudent(String email, String password) {
         log.info("Student login: [{}, {}]", email, password);
-        Student toLogin = repository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException("Student with email '" + email + "' does not exist"));
+        Student toLogin = getByEmailOrThrow(email);
         validatePasswordsMatch(email, password, toLogin.getPasswordHash());
         return toLogin;
     }
 
 
     @Transactional(readOnly = true)
-    public List<Student> findStudentsByCodes(List<Long> codes) {
-        List<Student> students = repository.findAllById(codes);
+    public List<Student> findStudentsByCodes(List<Long> ids) {
+        List<Student> students = repository.findAllById(ids);
+        validateAllStudentsExist(ids, students);
         log.info("Total students found: {}", students.size());
-        return repository.findAllById(codes);
+        return repository.findAllById(ids);
     }
 
     @Transactional(readOnly = true)
@@ -58,12 +58,12 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public Student findStudentByCode(Long code) {
-        return getByCodeOrThrow(code);
+    public Student findStudentById(Long id) {
+        return getByIdOrThrow(id);
     }
 
     public Student registerStudent(Student toRegister) {
-        validateCodeIsUnique(toRegister.getStudentCode());
+        validateCodeIsUnique(toRegister.getId());
         validateEmailDoesntExist(toRegister.getEmail());
         String encrypted = encoder.encode(toRegister.getPasswordHash());
         toRegister.setPasswordHash(encrypted);
@@ -71,17 +71,41 @@ public class StudentService {
 
         Student registered = repository.save(toRegister);
         log.info("Student registered: [{} - {} - {}]",
-                registered.getStudentCode(),
+                registered.getId(),
                 registered.getName(),
                 registered.getEmail());
         return registered;
+    }
+
+    public Student updateDepartmentPreferences(Long studentId, List<Long> departmentIds) {
+        validateAllDepartmentsExist(departmentIds);
+        Student existing = getByIdOrThrow(studentId);
+        validateStudentIsExamined(existing);
+
+        Long[] departmentIdsUpdated = departmentIds.toArray(new Long[0]);
+        existing.setPreferredDepartmentIds(departmentIdsUpdated);
+        existing.setStatus(StudentStatus.CHOICES_SUBMITTED);
+        Student updated = repository.save(existing);
+
+        log.info("Updated department preferences for student [id = {}, name: {}]",
+                updated.getId(), updated.getName());
+        return updated;
+    }
+
+    @Transactional
+    public void removeStudentByCode(Long code) {
+        int count = repository.deleteByIdReturningCount(code);
+        if (count == 0) {
+            throw new EntityNotFoundException("Student with code " + code + " does not exist");
+        }
+        log.info("Removed student with code = {}", code);
     }
 
     // TODO: finish refactoring parsing logic
     @Transactional
     public void processBatchFile(MultipartFile file, String delimiter, int batchSize) throws IOException {
         validateFileNotEmpty(file);
-        log.info("Batch file processing: {}, [size: {} bytes, content type: {}, delimiter: {}]",
+        log.warn("Batch file processing: {}, [size: {} bytes, content type: {}, delimiter: {}]",
                 file.getOriginalFilename(), file.getSize(), file.getContentType(), delimiter);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
@@ -95,7 +119,7 @@ public class StudentService {
                     throw new IllegalArgumentException("Empty lines are not allowed in a batch file");
                 }
                 Student toSave = parseToStudent(line, delimiter);
-                validateCodeIsUnique(toSave.getStudentCode());
+                validateCodeIsUnique(toSave.getId());
                 toInsert.add(toSave);
                 if (toInsert.size() == batchSize) {
                     repository.saveAll(toInsert);
@@ -105,7 +129,7 @@ public class StudentService {
             if (!toInsert.isEmpty()) {
                 repository.saveAll(toInsert);
             }
-            log.info("Batch insert complete: {} new students", lineNumber);
+            log.warn("Batch insert complete: {} new students", lineNumber);
         }
     }
 
@@ -127,7 +151,7 @@ public class StudentService {
         }
 
         Student toSave = new Student();
-        toSave.setStudentCode(code);
+        toSave.setId(code);
         toSave.setStatus(StudentStatus.REGISTERED);
         toSave.setName(name);
         toSave.setEmail(code + "@gmail.com");
@@ -140,44 +164,21 @@ public class StudentService {
         return toSave;
     }
 
-    public Student updateDepartmentPreferences(Long code, List<Long> departmentIds) {
-        validateAllDepartmentsExist(departmentIds);
-        Student existing = getByCodeOrThrow(code);
-
-        Long[] departmentIdsUpdated = departmentIds.toArray(new Long[0]);
-        existing.setPreferredDepartmentIds(departmentIdsUpdated);
-        existing.setStatus(StudentStatus.CHOICES_SUBMITTED);
-        Student updated = repository.save(existing);
-
-        log.info("Updated department preferences for student [code = {}, name: {}]",
-                updated.getStudentCode(), updated.getName());
-        return updated;
-    }
-
-    @Transactional
-    public void removeStudentByCode(Long code) {
-        int count = repository.deleteByIdReturningCount(code);
-        if (count == 0) {
-            throw new EntityNotFoundException("Student with code " + code + " does not exist");
-        }
-        log.info("Removed student with code = {}", code);
-    }
-
     public ResponseEntity<ByteArrayResource> exportStudentsToCsv() {
         List<Student> students = repository.findAll();
         String delimiter = ",";
         StringBuilder header = new StringBuilder();
-        header.append("student_code").append(delimiter)
-                .append("name").append(delimiter)
-                .append("email").append(delimiter)
-                .append("cgpa").append(delimiter)
-                .append("grade1_result").append(delimiter)
-                .append("grade2_result").append(delimiter)
-                .append("grade3_result").append(delimiter)
-                .append("placed_department_idx").append(delimiter);
+        header.append("Student ID").append(delimiter)
+                .append("Name").append(delimiter)
+                .append("Email").append(delimiter)
+                .append("CGPA").append(delimiter)
+                .append("Result for Grade 1").append(delimiter)
+                .append("Result for Grade 2").append(delimiter)
+                .append("Result for Grade 3").append(delimiter)
+                .append("Placed Department Index").append(delimiter);
 
         for (int i = 0; i < 10; i++) {
-            header.append("choice_").append(i + 1).append("_dep_id");
+            header.append("Dep. choice #").append(i + 1);
             if (i != 9) {
                 header.append(delimiter);
             }
@@ -185,22 +186,36 @@ public class StudentService {
 
         ByteArrayResource resource = exporter.exportToCsv(header.toString(), students, s -> {
             StringBuilder row = new StringBuilder();
-            row.append(s.getStudentCode()).append(delimiter)
+            row.append(s.getId()).append(delimiter)
                     .append(s.getName()).append(delimiter)
                     .append(s.getEmail()).append(delimiter)
                     .append(s.getCgpa()).append(delimiter)
-                    .append(s.getGrade1Result()).append(delimiter)
-                    .append(s.getGrade2Result()).append(delimiter)
-                    .append(s.getGrade3Result()).append(delimiter)
-                    .append(s.getPlacedPreferenceIdx() != null ? s.getPlacedPreferenceIdx() : "?").append(delimiter);
+                    .append(s.getGrade1Result() != null ? s.getGrade1Result() : "-").append(delimiter)
+                    .append(s.getGrade2Result() != null ? s.getGrade1Result() : "-").append(delimiter)
+                    .append(s.getGrade3Result() != null ? s.getGrade3Result() : "-").append(delimiter)
+                    .append(s.getPlacedPreferenceIdx() != null ? s.getPlacedPreferenceIdx() : "-").append(delimiter);
 
-            for (int i = 0; i < 10; i++) {
-                Long depId = s.getPreferredDepartmentIds()[i];
-                row.append(depId == null ? "-" : depId);
-                if (i != 9) {
-                    row.append(delimiter);
+            if (s.getPreferredDepartmentIds() == null) {
+                for (int i = 0; i < 10; i++) {
+                    row.append("-");
+                    if (i != 9) {
+                        row.append(delimiter);
+                    }
+                }
+            } else {
+                for (int i = 0; i < 10; i++) {
+                    if (i < s.getPreferredDepartmentIds().length) {
+                        row.append(s.getPreferredDepartmentIds()[i]);
+                    } else {
+                     row.append("-");
+                    }
+
+                    if (i != 9) {
+                        row.append(delimiter);
+                    }
                 }
             }
+
             return row.toString();
         });
 
@@ -211,9 +226,30 @@ public class StudentService {
                 .body(resource);
     }
 
-    private Student getByCodeOrThrow(Long code) {
+    private Student getByIdOrThrow(Long code) {
         return repository.findById(code).orElseThrow(
                 () -> new EntityNotFoundException("Student with code = " + code + " does not exist"));
+    }
+
+    private Student getByEmailOrThrow(String email) {
+        return repository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("Student with email '" + email + "' does not exist"));
+    }
+
+    private void validateAllStudentsExist(List<Long> ids, List<Student> students) {
+        List<Long> missingIds = students.stream()
+                .map(Student::getId)
+                .filter(id -> !ids.contains(id))
+                .toList();
+        if (!missingIds.isEmpty()) {
+            throw new EntityNotFoundException("Some students for provided ids do not exist: " + missingIds);
+        }
+    }
+
+    private void validateStudentIsExamined(Student existing) {
+        if (existing.getStatus() != StudentStatus.EXAMINED) {
+            throw new IllegalStateException("Can't submit department choices for an unexamined student");
+        }
     }
 
     private void validateCodeIsUnique(Long code) {
@@ -228,10 +264,9 @@ public class StudentService {
         }
     }
 
-    private void validateAllDepartmentsExist(List<Long> departmentCodes) {
-        List<Long> missingDepartmentCodes = depRepository.findMissingDepartmentCodes(departmentCodes);
-        if (!missingDepartmentCodes.isEmpty()) {
-            throw new EntityNotFoundException("Some departments for provided codes do not exist: " + missingDepartmentCodes);
+    private void validateAllDepartmentsExist(List<Long> ids) {
+        if (!depRepository.existsByIdIn(ids)) {
+            throw new EntityNotFoundException("Some departments for provided codes do not exist!");
         }
     }
 

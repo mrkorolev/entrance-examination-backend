@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class StudentDto {
     @NotNull(message = "Student code must be provided")
-    private Long studentCode;
+    private Long studentId;
 
     @Null(message = "Exam entry ID are not to be provided externally")
     private Long examEntryId;
