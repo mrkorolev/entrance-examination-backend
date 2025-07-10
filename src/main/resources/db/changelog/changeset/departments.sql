@@ -1,5 +1,5 @@
 CREATE TABLE departments (
-    department_code bigint PRIMARY KEY,
+    id bigint PRIMARY KEY,
     university_id bigint,
 
     name varchar(64) UNIQUE NOT NULL,

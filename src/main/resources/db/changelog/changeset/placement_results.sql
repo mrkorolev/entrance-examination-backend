@@ -1,10 +1,12 @@
 CREATE TABLE placement_results (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    department_code bigint NOT NULL,
-    student_code bigint UNIQUE NOT NULL,
+    department_id bigint NOT NULL,
+    student_id bigint UNIQUE NOT NULL,
 
     placement_rank int NOT NULL,
+    final_score float NOT NULL,
+    preferred_by_department varchar(6) NOT NULL,
 
-    FOREIGN KEY (student_code) REFERENCES students(student_code) ON DELETE CASCADE,
-    FOREIGN KEY (department_code) REFERENCES departments(department_code) ON DELETE CASCADE
+    FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
 );

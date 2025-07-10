@@ -1,5 +1,5 @@
 CREATE TABLE students (
-    student_code bigint PRIMARY KEY,
+    id bigint PRIMARY KEY,
 
     name varchar(64) NOT NULL,
     email varchar(64) UNIQUE NOT NULL,
