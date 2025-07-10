@@ -14,10 +14,10 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     boolean existsByName(String name);
 
     @Query(nativeQuery = true, value = """
-    SELECT unnest(:codes) AS missing_id
+    SELECT unnest(:ids) AS missing_id
     EXCEPT
     SELECT id FROM departments""")
-    List<Long> findMissingDepartmentCodes(List<Long> codes);
+    List<Long> findMissingDepartmentIds(@Param("ids") List<Long> ids);
 
     @Modifying
     @Query("DELETE FROM Department d WHERE d.id = :id")

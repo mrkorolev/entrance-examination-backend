@@ -22,8 +22,7 @@ import lombok.Setter;
 @Table(name = "departments")
 public class Department {
     @Id
-    @Column(name = "department_code", nullable = false, unique = true)
-    private Long departmentCode;
+    private Long id;
 
     // Default for ManyToOne relation: FetchType.EAGER
     @ManyToOne
