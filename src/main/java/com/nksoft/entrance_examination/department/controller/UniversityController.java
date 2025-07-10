@@ -33,8 +33,8 @@ public class UniversityController {
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of universities"))
     @GetMapping
     public List<UniversityDto> getUniversities() {
-        List<University> foundUniversities = service.findUniversities();
-        return mapper.toDtoList(foundUniversities);
+        List<University> universities = service.findUniversities();
+        return mapper.toDtoList(universities);
     }
 
     @Operation(summary = "Get university by ID", description = "Returns a single university with a unique ID")
@@ -49,7 +49,7 @@ public class UniversityController {
 
     @Operation(summary = "Register university", description = "Registers and returns a new university")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of university with a provided dto"),
+            @ApiResponse(responseCode = "201", description = "Successful registration of university from a provided dto"),
             @ApiResponse(responseCode = "400", description = "University with provided name already exists")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping

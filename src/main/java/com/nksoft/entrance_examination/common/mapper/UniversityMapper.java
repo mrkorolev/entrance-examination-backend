@@ -23,7 +23,7 @@ public interface UniversityMapper {
     @Named("toDepartmentIds")
     default List<Long> toDepartmentIds(List<Department> departments) {
         return departments.stream()
-                .map(Department::getDepartmentCode)
+                .map(Department::getId)
                 .toList();
     }
 }

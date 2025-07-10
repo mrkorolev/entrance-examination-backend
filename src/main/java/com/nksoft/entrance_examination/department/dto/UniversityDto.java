@@ -17,7 +17,7 @@ public class UniversityDto {
     @Null(message = "Department IDs are not to be provided externally")
     private List<Long> departmentIds;
     @NotBlank(message = "University name can't be null/empty")
-    @Size(max = 64, message = "Name can't exceed 64 characters")
+    @Size(max = 64, message = "Name must not exceed 64 characters")
     private String name;
     @Size(max = 128, message = "Description must not exceed 128 characters")
     private String description;

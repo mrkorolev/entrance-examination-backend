@@ -20,7 +20,6 @@ public class UniversityService {
     public List<University> findUniversities() {
         List<University> universities = uniRepository.findAll();
         log.info("Total universities found: {}", universities.size());
-
         return universities;
     }
 
@@ -33,7 +32,8 @@ public class UniversityService {
         validateByName(toRegister.getName());
         University registered = uniRepository.save(toRegister);
         log.info("Uni registered: [{} - {}]",
-                registered.getId(), registered.getName());
+                registered.getId(),
+                registered.getName());
         return registered;
     }
 

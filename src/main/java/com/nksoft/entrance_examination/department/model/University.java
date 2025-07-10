@@ -33,7 +33,7 @@ public class University {
             orphanRemoval = true)
     private List<Department> departments = new ArrayList<>();
 
-    @Column(length = 64, nullable = false)
+    @Column(length = 64, nullable = false, unique = true)
     private String name;
     @Column(length = 128)
     private String description;
