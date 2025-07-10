@@ -41,6 +41,7 @@ public class PlacementService {
 
     @Transactional
     public ResponseEntity<ByteArrayResource> runPlacement() {
+        validatePlacementsToBeRun();
         Map<Exam, List<ExamResult>> resultsMap = examResultRepository.findAll().stream()
                 .collect(Collectors.groupingBy(ExamResult::getExam));
         for (Exam e : resultsMap.keySet()) {
@@ -58,14 +59,14 @@ public class PlacementService {
         List<Student> students = studentRepository.findAll();
         List<Department> departmentList = departmentRepository.findAll();
 
-        departmentList.sort(Comparator.comparingLong(Department::getDepartmentCode));
+        departmentList.sort(Comparator.comparingLong(Department::getId));
         Map<Long, Department> departmentMap = departmentList.stream()
-                .collect(Collectors.toMap(Department::getDepartmentCode, Function.identity()));
+                .collect(Collectors.toMap(Department::getId, Function.identity()));
 
         Map<Long, PriorityQueue<StudentWithScore>> departmentQueues = new HashMap<>();
         for (Department department : departmentList) {
             departmentQueues.put(
-                    department.getDepartmentCode(),
+                    department.getId(),
                     new PriorityQueue<>(Comparator.comparingDouble(s -> s.score))
             );
         }
@@ -116,12 +117,12 @@ public class PlacementService {
 
         StringBuilder reportBuilder = new StringBuilder();
         for (Department d : departmentList) {
-            reportBuilder.append(d.getDepartmentCode()).append(" ")
+            reportBuilder.append(d.getId()).append(" ")
                     .append(d.getName()).append(" ")
                     .append(d.getPreferredGrade().ordinal() + 1).append(" ")
                     .append(d.getQuota()).append("\n\n");
 
-            Queue<StudentWithScore> placedStudentsQueue = departmentQueues.get(d.getDepartmentCode());
+            Queue<StudentWithScore> placedStudentsQueue = departmentQueues.get(d.getId());
             List<StudentWithScore> placedStudentsPerDepartment = new ArrayList<>(placedStudentsQueue);
             placedStudentsPerDepartment.sort(Comparator.comparingDouble((StudentWithScore s) -> s.score).reversed());
 
@@ -131,7 +132,7 @@ public class PlacementService {
             for (StudentWithScore sws : placedStudentsPerDepartment) {
                 Student s = sws.student;
                 reportBuilder
-                        .append(s.getStudentCode()).append(" ")
+                        .append(s.getId()).append(" ")
                         .append(s.getName()).append(" ");
                 float grade = switch (d.getPreferredGrade()) {
                     case GRADE1 -> s.getGrade1Result();
@@ -160,7 +161,7 @@ public class PlacementService {
         reportBuilder.append(-1).append(" ")
                 .append("DIDNT GET PLACED").append("\n\n");
         for (Student s : didntGetPlaced) {
-            reportBuilder.append(s.getStudentCode()).append(" ")
+            reportBuilder.append(s.getId()).append(" ")
                     .append(s.getName()).append(" ")
                     .append(s.getGrade1Result()).append(" ")
                     .append(s.getGrade2Result()).append(" ")
@@ -204,6 +205,12 @@ public class PlacementService {
                 .average()
                 .orElseThrow(() -> new IllegalStateException("Could not calculate standard deviation for results"));
         return (float)Math.sqrt(variance);
+    }
+
+    private void validatePlacementsToBeRun() {
+        if (repository.count() != 0) {
+            throw new IllegalStateException("Placement algorithm has already been run recently");
+        }
     }
 
     private record StudentWithScore(Student student, double score) { }
