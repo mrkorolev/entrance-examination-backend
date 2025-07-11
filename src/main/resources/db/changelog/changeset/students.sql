@@ -8,6 +8,7 @@ CREATE TABLE students (
 
     preferred_dep_ids bigint[],
     placed_pref_idx int,
+
     cgpa float NOT NULL,
     grade1_result float,
     grade2_result float,

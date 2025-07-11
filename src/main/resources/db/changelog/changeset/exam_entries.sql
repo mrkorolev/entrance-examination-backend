@@ -3,11 +3,11 @@ CREATE TABLE exam_entries (
     student_id bigint  UNIQUE NOT NULL,
     exam_center_id bigint NOT NULL,
 
-    seat_number int NOT NULL,
+    registration_number int NOT NULL,
     created_at timestamp NOT NULL,
 
     UNIQUE(student_id, exam_center_id),
-    UNIQUE(exam_center_id, seat_number),
+    UNIQUE(exam_center_id, registration_number),
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (exam_center_id) REFERENCES exam_centers(id) ON DELETE CASCADE
 );
