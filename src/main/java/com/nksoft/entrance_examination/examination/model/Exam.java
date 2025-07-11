@@ -39,7 +39,7 @@ public class Exam {
     private List<ExamResult> results = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "exam_grade_type", nullable = false)
+    @Column(name = "grade_type", nullable = false)
     private GradeType gradeType;
     @Column(name = "exam_date_time", nullable = false)
     private LocalDateTime startTime;

@@ -21,6 +21,7 @@ public class ExamCenterDto {
     @NotBlank(message = "Exam center name can't be null/empty")
     @Size(max = 64, message = "Exam center name can't exceed 64 characters")
     private String name;
+    @NotBlank(message = "Exam center address can't be null/empty")
     @Size(max = 128, message = "Exam center address can't exceed 128 characters")
     private String address;
     @Positive(message = "Total rooms has to be a greater than zero")

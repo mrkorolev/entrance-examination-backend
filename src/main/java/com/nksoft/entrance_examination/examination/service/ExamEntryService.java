@@ -1,5 +1,6 @@
 package com.nksoft.entrance_examination.examination.service;
 
+import com.nksoft.entrance_examination.common.file.FileExporter;
 import com.nksoft.entrance_examination.examination.model.ExamCenter;
 import com.nksoft.entrance_examination.examination.model.ExamEntry;
 import com.nksoft.entrance_examination.examination.repository.ExamCenterRepository;
@@ -8,8 +9,11 @@ import com.nksoft.entrance_examination.student.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -23,6 +27,7 @@ public class ExamEntryService {
     private final ExamEntryRepository repository;
     private final StudentRepository studentRepository;
     private final ExamCenterRepository centerRepository;
+    private final FileExporter exporter;
     private final ConcurrentMap<Long, Object> centerLocks = new ConcurrentHashMap<>();
 
     @Transactional(readOnly = true)
@@ -57,12 +62,12 @@ public class ExamEntryService {
 
             validateCapacityNotExceeded(center.getId(), capacity, registrations);
             int seatNumber = registrations + 1;
-            toRegister.setSeatNumber(seatNumber);
+            toRegister.setRegistrationNumber(seatNumber);
             ExamEntry registered = repository.save(toRegister);
             log.info("Exam entry registered: [examId = {}, studentId = {}, seatNumber = {}]",
                     registered.getExamCenter().getId(),
                     registered.getStudent().getId(),
-                    registered.getSeatNumber());
+                    registered.getRegistrationNumber());
             return registered;
         }
     }
@@ -74,6 +79,45 @@ public class ExamEntryService {
             throw new EntityNotFoundException("Exam entry with ID = " + id + " does not exist");
         }
         log.info("Removed exam entry with ID = {}", id);
+    }
+
+    public ResponseEntity<ByteArrayResource> exportEntriesToCsv(Long examCenterId) {
+        List<ExamEntry> entries = examCenterId != null ?
+                repository.findByExamCenter_Id(examCenterId) :
+                repository.findAll();
+        String delimiter = ",";
+        StringBuilder header = new StringBuilder();
+        header.append("Entry ID").append(delimiter)
+                .append("Student Name").append(delimiter)
+                .append("Email").append(delimiter)
+                .append("Room #").append(delimiter)
+                .append("Seat #").append(delimiter)
+                .append("Exam Center Address");
+
+        ByteArrayResource resource = exporter.exportToCsv(header.toString(), entries, ee -> {
+            int roomCapacity = ee.getExamCenter().getRoomCapacity();
+            int registrationNumber = ee.getRegistrationNumber();
+            int room = (registrationNumber - 1) / roomCapacity + 1;
+            int seat = (registrationNumber - 1) % roomCapacity + 1;
+
+            StringBuilder row = new StringBuilder();
+            row.append(ee.getId()).append(delimiter)
+                    .append(ee.getStudent().getName()).append(delimiter)
+                    .append(ee.getStudent().getEmail()).append(delimiter)
+                    .append(room).append(delimiter)
+                    .append(seat).append(delimiter)
+                    .append(ee.getExamCenter().getAddress());
+            return row.toString();
+        });
+
+        String centerQualifier = String.format(examCenterId == null ?
+                "" : "_for_center_%d", examCenterId);
+        String fileName = String.format("entries%s.csv", centerQualifier);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .header(HttpHeaders.CONTENT_TYPE, "text/csv")
+                .contentLength(resource.contentLength())
+                .body(resource);
     }
 
     private ExamEntry getByIdOrThrow(Long id) {

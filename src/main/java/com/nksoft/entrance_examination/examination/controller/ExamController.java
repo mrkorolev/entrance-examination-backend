@@ -39,7 +39,7 @@ public class ExamController {
 
     @Operation(summary = "Get exam by ID", description = "Returns a single exam with a unique ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of exam with a provided ID"),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of exam for a provided ID"),
             @ApiResponse(responseCode = "404", description = "No exam found for provided ID")})
     @GetMapping("/{id}")
     public ExamDto getExamById(@PathVariable Long id) {
@@ -49,9 +49,8 @@ public class ExamController {
 
     @Operation(summary = "Register exam", description = "Registers and returns a new exam")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of exam with a provided dto"),
-            @ApiResponse(responseCode = "400", description = "Exam to be registered has a time/capacity overlap with another exam at the same exam center"),
-            @ApiResponse(responseCode = "404", description = "Exam center for provided ID doesn't exist")})
+            @ApiResponse(responseCode = "201", description = "Successful creation of exam for a provided dto"),
+            @ApiResponse(responseCode = "400", description = "Exam to be registered has a time overlap (same day) or there already exists an exam for provided grade type")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ExamDto addNewExam(@Valid @RequestBody ExamDto dto) {
@@ -62,7 +61,7 @@ public class ExamController {
 
     @Operation(summary = "Remove exam", description = "Removes a single exam with a unique ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successful removal of exam with a provided ID"),
+            @ApiResponse(responseCode = "204", description = "Successful removal of exam for a provided ID"),
             @ApiResponse(responseCode = "404", description = "No exam found for provided ID")})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")

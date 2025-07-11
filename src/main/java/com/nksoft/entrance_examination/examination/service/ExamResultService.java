@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.stream;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -159,7 +157,7 @@ public class ExamResultService {
         result.setCorrect(correct);
         result.setIncorrect(incorrect);
         result.setUnanswered(blank);
-        result.setNetScore(score < 0 ? 0 : score);
+        result.setRawScore(score < 0 ? 0 : score);
     }
 
     public ResponseEntity<ByteArrayResource> exportResultsToCsv() {
@@ -190,7 +188,7 @@ public class ExamResultService {
                     .append(r.getCorrect()).append(delimiter)
                     .append(r.getIncorrect()).append(delimiter)
                     .append(r.getUnanswered()).append(delimiter)
-                    .append(r.getNetScore()).append(delimiter)
+                    .append(r.getRawScore()).append(delimiter)
                     .append(r.getNormalizedScore());
 
             return row.toString();

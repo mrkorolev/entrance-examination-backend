@@ -10,7 +10,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ExamEntryMapper {
-    @Mapping(source = "examEntryId", target = "id")
     @Mapping(source = "studentId", target = "student.id")
     @Mapping(source = "examCenterId", target = "examCenter.id")
     ExamEntry toEntity(ExamEntryDto dto);
@@ -18,6 +17,7 @@ public interface ExamEntryMapper {
     @Mapping(source = "id", target = "examEntryId")
     @Mapping(source = "student.id", target = "studentId")
     @Mapping(source = "examCenter.id", target = "examCenterId")
+    @Mapping(source= "registrationNumber", target = "registrationNo")
     ExamEntryDto toDto(ExamEntry examEntry);
 
     List<ExamEntryDto> toDtoList(List<ExamEntry> entities);

@@ -36,8 +36,8 @@ public class ExamEntry {
     @JoinColumn(name = "exam_center_id", nullable = false)
     private ExamCenter examCenter;
 
-    @Column(name = "seat_number", nullable = false)
-    private int seatNumber;
+    @Column(name = "registration_number", nullable = false)
+    private int registrationNumber;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

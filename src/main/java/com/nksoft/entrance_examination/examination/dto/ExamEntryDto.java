@@ -20,8 +20,8 @@ public class ExamEntryDto {
     @NotNull(message = "Exam ID must be provided")
     private Long examCenterId;
 
-    @Null(message = "Seat number must not be provided externally")
-    private Integer seatNumber;
+    @Null(message = "Registration number must not be provided externally")
+    private Integer registrationNo;
 
     @Null(message = "Registration date must not be provided externally")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

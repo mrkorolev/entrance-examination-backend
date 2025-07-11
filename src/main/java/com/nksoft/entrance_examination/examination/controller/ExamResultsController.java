@@ -26,10 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/exam-results")
 public class ExamResultsController {
-    // TODO: finish controller, only GET and POST requests allowed!
-    /*
-        API: Import, Export, Get (by EntryId)
-     */
     private final ExamResultService service;
     private final ExamResultMapper mapper;
 
@@ -48,10 +44,10 @@ public class ExamResultsController {
             - error happened while parsing the file (e.g. file format/delimiter is invalid)"""),
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
     @PostMapping("/import")
-    public ResponseEntity<?> uploadStudentsBatch(@RequestBody MultipartFile file,
-                                                 @RequestParam(defaultValue = " ") String delimiter,
-                                                 @RequestParam(defaultValue = "50") int batchSize,
-                                                 @RequestParam(name = "exam-grade-type") GradeType examGradeType) throws IOException {
+    public ResponseEntity<?> importResults(@RequestBody MultipartFile file,
+                                           @RequestParam(defaultValue = " ") String delimiter,
+                                           @RequestParam(defaultValue = "50") int batchSize,
+                                           @RequestParam(name = "exam-grade-type") GradeType examGradeType) throws IOException {
         service.processBatchFile(examGradeType, file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed exam results file");
     }

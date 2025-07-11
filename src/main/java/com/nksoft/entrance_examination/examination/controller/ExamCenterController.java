@@ -31,7 +31,7 @@ public class ExamCenterController {
     private final ExamCenterService service;
     private final ExamCenterMapper mapper;
 
-    @Operation(summary = "Get exam centers", description = "Returns a list of exam centers")
+    @Operation(summary = "Get exam centers", description = "Returns a list of exam centers, either all or only available")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of exam centers"))
     @GetMapping
     public List<ExamCenterDto> getCenters(@RequestParam(defaultValue = "false", required = false) boolean availableOnly) {
@@ -41,7 +41,7 @@ public class ExamCenterController {
 
     @Operation(summary = "Get exam center by ID", description = "Returns a single exam center with a unique ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of exam center with a provided ID"),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of exam center for a provided ID"),
             @ApiResponse(responseCode = "404", description = "No exam center found for provided ID")})
     @GetMapping("/{id}")
     public ExamCenterDto getCenterById(@PathVariable Long id) {
@@ -51,7 +51,7 @@ public class ExamCenterController {
 
     @Operation(summary = "Register exam center", description = "Registers and returns a newly created exam center")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of exam center with a provided dto"),
+            @ApiResponse(responseCode = "201", description = "Successful creation of exam center for a provided dto"),
             @ApiResponse(responseCode = "400", description = "Exam center with provided name already exists")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -73,7 +73,7 @@ public class ExamCenterController {
 
     @Operation(summary = "Export exam centers", description = "Exports exam centers to a csv batch file")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully exported exam centers to a csv batch file")})
+            @ApiResponse(responseCode = "200", description = "Successfully exported exam centers to exam_centers.csv")})
     @GetMapping("/export")
     public ResponseEntity<ByteArrayResource> exportCenters() {
         return service.exportCentersToCsv();

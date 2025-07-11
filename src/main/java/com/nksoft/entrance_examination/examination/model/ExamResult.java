@@ -47,8 +47,8 @@ public class ExamResult {
     @Column(nullable = false)
     private int unanswered;
 
-    @Column(name = "net_score")
-    private Float netScore;
+    @Column(name = "raw_score")
+    private Float rawScore;
     @Column(name = "normalized_score")
     private Float normalizedScore;
     @Column(name = "final_score")
