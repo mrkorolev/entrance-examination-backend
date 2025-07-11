@@ -15,7 +15,7 @@ spring:
     username: user
     password: password
 
-  # does not make db queries after leaving service level
+  # TODO: Change later for lazy init
 #  jpa:
 #    open-in-view: false
 

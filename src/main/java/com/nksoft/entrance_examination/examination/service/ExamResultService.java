@@ -14,6 +14,9 @@ import com.nksoft.entrance_examination.student.model.Student;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,10 +42,12 @@ public class ExamResultService {
     private final ExamEntryRepository entryRepository;
 
     @Transactional(readOnly = true)
-    public List<ExamResult> findResults() {
-        List<ExamResult> results = repository.findAll();
-        log.info("Total exam results found: {}", results.size());
-        return results;
+    public Page<ExamResult> findResults(
+            @PageableDefault(size = 20, sort = "id") Pageable pageable)
+    {
+        Page<ExamResult> page = repository.findAll(pageable);
+        log.info("Total exam results found: {}", page.getTotalElements());
+        return page;
     }
 
     @Transactional

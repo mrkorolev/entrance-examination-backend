@@ -26,6 +26,7 @@
 		<docker.plugin.version>1.4.13</docker.plugin.version>
 		<docker.image.prefix>nvkorolev</docker.image.prefix>
 		<graalvm.plugin.version>0.9.28</graalvm.plugin.version>
+		<sonar.version>3.11.0.3922</sonar.version>
 	</properties>
 
 	<dependencies>
@@ -247,7 +248,7 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.11.0.3922</version>
+				<version>${sonar.version}</version>
 			</plugin>
 		</plugins>
 	</build>
