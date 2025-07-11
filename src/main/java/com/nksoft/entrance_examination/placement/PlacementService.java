@@ -184,7 +184,7 @@ public class PlacementService {
 
     private void normalizeAndRescaleResults(List<ExamResult> results, float mean, float sd) {
         results.forEach(r -> {
-            float rawScore = r.getNetScore();
+            float rawScore = r.getRawScore();
             float normalized = 50 + (rawScore - mean) * (10 / sd);
             float rescaled = 10 * normalized + 300;
             r.setNormalizedScore(normalized);
@@ -194,14 +194,14 @@ public class PlacementService {
 
     private float calculateMeanForResults(List<ExamResult> examResults) {
         return (float)examResults.stream()
-                .mapToDouble(ExamResult::getNetScore)
+                .mapToDouble(ExamResult::getRawScore)
                 .average()
                 .orElseThrow(() -> new IllegalStateException("Could not calculate mean for results"));
     }
 
     private float calculateSdForResults(List<ExamResult> examResults, float mean) {
         double variance = examResults.stream()
-                .mapToDouble(er -> Math.pow(er.getNetScore() - mean, 2))
+                .mapToDouble(er -> Math.pow(er.getRawScore() - mean, 2))
                 .average()
                 .orElseThrow(() -> new IllegalStateException("Could not calculate standard deviation for results"));
         return (float)Math.sqrt(variance);
