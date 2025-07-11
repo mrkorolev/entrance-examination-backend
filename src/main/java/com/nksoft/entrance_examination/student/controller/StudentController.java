@@ -38,7 +38,7 @@ public class StudentController {
     private final StudentService service;
     private final StudentMapper mapper;
 
-    @Operation(summary = "Get students", description = "Returns a list of students (based on ids or pagination provided)")
+    @Operation(summary = "Get students", description = "Returns a list of students if student IDs were provided (otherwise returns a Page)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful retrieval of students"),
             @ApiResponse(responseCode = "404", description = "Some students for the provided IDs do not exist")})
@@ -58,7 +58,7 @@ public class StudentController {
 
     @Operation(summary = "Get student by ID", description = "Returns a single student with a unique ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of student with a provided ID"),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of student for a provided ID"),
             @ApiResponse(responseCode = "404", description = "No student found for provided ID")})
     @GetMapping("/{id}")
     public StudentDto getStudentById(@PathVariable Long id) {
@@ -81,8 +81,8 @@ public class StudentController {
     @Operation(summary = "Update student's department preferences",
                description = "Updates department preferences of a student for provided ID and returns him")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful update of student department preferences with a provided code"),
-            @ApiResponse(responseCode = "400", description = """
+            @ApiResponse(responseCode = "200", description = "Successful update of student department preferences for a provided ID"),
+            @ApiResponse(responseCode = "404", description = """
             Failed to update department preferences for a student with provided code"). Happens if:"
             - some of the departments for provided IDs do not exist
             - student for provided ID doesn't exist""")})
@@ -95,7 +95,7 @@ public class StudentController {
 
     @Operation(summary = "Remove student", description = "Removes a single student with a unique ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successful removal of student with a provided ID"),
+            @ApiResponse(responseCode = "204", description = "Successful removal of student for a provided ID"),
             @ApiResponse(responseCode = "404", description = "No student found for provided ID")})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
@@ -105,10 +105,10 @@ public class StudentController {
 
     @Operation(summary = "Student batch insert", description = "Registers students based on delimiter & info provided in a batch file")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of departments from a batch file"),
+            @ApiResponse(responseCode = "201", description = "Successful creation of students from a batch file"),
             @ApiResponse(responseCode = "400", description = """
             An error occurred while parsing through the batch file. Happens if:
-            - provided student file is empty"
+            - provided student file is empty
             - error happened while parsing the file (e.g. file format/delimiter is invalid)"""),
             @ApiResponse(responseCode = "500", description = "I/O error while opening/closing the file")})
     @ResponseStatus(HttpStatus.CREATED)
@@ -116,7 +116,7 @@ public class StudentController {
     public ResponseEntity<?> importStudents(@RequestBody MultipartFile file,
                                             @RequestParam(defaultValue = " ") String delimiter,
                                             @RequestParam(defaultValue = "50") int batchSize) throws IOException {
-        service.processBatchFile(file, delimiter, batchSize);
+        service.importStudents(file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed students batch file");
     }
 

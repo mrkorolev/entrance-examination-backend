@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,7 +62,7 @@ public class StudentService {
     }
 
     public Student registerStudent(Student toRegister) {
-        validateCodeIsUnique(toRegister.getId());
+        validateIdIsUnique(toRegister.getId());
         validateEmailDoesntExist(toRegister.getEmail());
         String encrypted = encoder.encode(toRegister.getPasswordHash());
         toRegister.setPasswordHash(encrypted);
@@ -80,7 +79,6 @@ public class StudentService {
     public Student updateDepartmentPreferences(Long studentId, List<Long> departmentIds) {
         validateAllDepartmentsExist(departmentIds);
         Student existing = getByIdOrThrow(studentId);
-        validateStudentIsExamined(existing);
 
         Long[] departmentIdsUpdated = departmentIds.toArray(new Long[0]);
         existing.setPreferredDepartmentIds(departmentIdsUpdated);
@@ -103,7 +101,7 @@ public class StudentService {
 
     // TODO: finish refactoring parsing logic
     @Transactional
-    public void processBatchFile(MultipartFile file, String delimiter, int batchSize) throws IOException {
+    public void importStudents(MultipartFile file, String delimiter, int batchSize) throws IOException {
         validateFileNotEmpty(file);
         log.warn("Batch file processing: {}, [size: {} bytes, content type: {}, delimiter: {}]",
                 file.getOriginalFilename(), file.getSize(), file.getContentType(), delimiter);
@@ -119,7 +117,7 @@ public class StudentService {
                     throw new IllegalArgumentException("Empty lines are not allowed in a batch file");
                 }
                 Student toSave = parseToStudent(line, delimiter);
-                validateCodeIsUnique(toSave.getId());
+                validateIdIsUnique(toSave.getId());
                 toInsert.add(toSave);
                 if (toInsert.size() == batchSize) {
                     repository.saveAll(toInsert);
@@ -139,7 +137,7 @@ public class StudentService {
         if (params.length != 15) {
             throw new IllegalArgumentException("File doesn't follow the expected format: [id, name, grade1, grade2, grade3, preferences(10)]");
         }
-        Long code = Long.parseLong(params[0]);
+        Long id = Long.parseLong(params[0]);
         String name = params[1];
         float grade1 = Float.parseFloat(params[2]);
         float grade2 = Float.parseFloat(params[3]);
@@ -151,11 +149,11 @@ public class StudentService {
         }
 
         Student toSave = new Student();
-        toSave.setId(code);
+        toSave.setId(id);
         toSave.setStatus(StudentStatus.REGISTERED);
         toSave.setName(name);
-        toSave.setEmail(code + "@gmail.com");
-        toSave.setPasswordHash(code + "_password");
+        toSave.setEmail(id + "@gmail.com");
+        toSave.setPasswordHash(id + "_password");
         toSave.setPreferredDepartmentIds(preferences);
         toSave.setCgpa(0.0F);
         toSave.setGrade1Result(grade1);
@@ -246,13 +244,7 @@ public class StudentService {
         }
     }
 
-    private void validateStudentIsExamined(Student existing) {
-        if (existing.getStatus() != StudentStatus.EXAMINED) {
-            throw new IllegalStateException("Can't submit department choices for an unexamined student");
-        }
-    }
-
-    private void validateCodeIsUnique(Long code) {
+    private void validateIdIsUnique(Long code) {
         if (repository.existsById(code)) {
             throw new EntityExistsException("Student with code = " + code + " already exists");
         }

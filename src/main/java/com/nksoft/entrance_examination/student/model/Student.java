@@ -49,11 +49,11 @@ public class Student {
     @Column(nullable = false)
     private Float cgpa;
     @Column(name = "grade1_result")
-    private Float grade1Result;
+    private Float grade1Result = 0F;
     @Column(name = "grade2_result")
-    private Float grade2Result;
+    private Float grade2Result = 0F;
     @Column(name = "grade3_result")
-    private Float grade3Result;
+    private Float grade3Result = 0F;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
