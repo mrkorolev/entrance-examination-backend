@@ -39,7 +39,7 @@ jobs:
 
 
   native-build:
-    name: Native Image Build
+    name: GraalVM Build
     needs: jvm-build
     runs-on: ubuntu-22.04
 
