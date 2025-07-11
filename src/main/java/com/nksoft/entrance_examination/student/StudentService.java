@@ -150,7 +150,7 @@ public class StudentService {
 
         Student toSave = new Student();
         toSave.setId(id);
-        toSave.setStatus(StudentStatus.REGISTERED);
+        toSave.setStatus(StudentStatus.CHOICES_SUBMITTED);
         toSave.setName(name);
         toSave.setEmail(id + "@gmail.com");
         toSave.setPasswordHash(id + "_password");

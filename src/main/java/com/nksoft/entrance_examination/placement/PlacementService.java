@@ -9,6 +9,7 @@ import com.nksoft.entrance_examination.student.model.Student;
 import com.nksoft.entrance_examination.student.model.StudentStatus;
 import com.nksoft.entrance_examination.department.repository.DepartmentRepository;
 import com.nksoft.entrance_examination.student.StudentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -39,8 +40,14 @@ public class PlacementService {
     private final ExamRepository examRepository;
     private final PlacementResultRepository repository;
 
+    @Transactional(readOnly = true)
+    public List<PlacementResult> findPlacementsForDepartment(Long departmentId) {
+        validateDepartmentExists(departmentId);
+        return repository.findByDepartment_IdOrderByRankDesc(departmentId);
+    }
+
     @Transactional
-    public ResponseEntity<ByteArrayResource> runPlacement() {
+    public ResponseEntity<ByteArrayResource> runPlacementAndExport() {
         validatePlacementsToBeRun();
         Map<Exam, List<ExamResult>> resultsMap = examResultRepository.findAll().stream()
                 .collect(Collectors.groupingBy(ExamResult::getExam));
@@ -56,7 +63,7 @@ public class PlacementService {
         examRepository.saveAll(resultsMap.keySet());
 
 
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentRepository.findByStatus(StudentStatus.CHOICES_SUBMITTED);
         List<Department> departmentList = departmentRepository.findAll();
 
         departmentList.sort(Comparator.comparingLong(Department::getId));
@@ -210,6 +217,12 @@ public class PlacementService {
     private void validatePlacementsToBeRun() {
         if (repository.count() != 0) {
             throw new IllegalStateException("Placement algorithm has already been run recently");
+        }
+    }
+
+    private void validateDepartmentExists(Long departmentId) {
+        if (!departmentRepository.existsById(departmentId)) {
+            throw new EntityNotFoundException("Department with id " + departmentId + " not found");
         }
     }
 
