@@ -1,0 +1,790 @@
+{
+	"info": {
+		"_postman_id": "9762e7e9-1f28-4281-8079-b5ac0c695e61",
+		"name": "Entrance Examination Collection",
+		"description": "Testing endpoints for entrance examination monolith",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29984118"
+	},
+	"item": [
+		{
+			"name": "ExamCenter",
+			"item": [
+				{
+					"name": "Get exam centers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exam-centers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-centers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get exam center",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"University #1\",\n    \"description\": \"Description #1\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/exam-centers/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-centers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register exam center",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Exam center #2\",\n    \"address\": \"Address #1\",\n    \"total-rooms\": 2,\n    \"room-capacity\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/exam-centers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-centers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete exam center",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exam-centers/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-centers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export batch",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
+			"description": "Describes the ExamCenter API, representing an exam center with its name, address, and capacity (# of students that can be examined at the same time instance in this center)"
+		},
+		{
+			"name": "Exam",
+			"item": [
+				{
+					"name": "Get exams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exams",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get exam",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exams/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exams",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register exam",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"exam-grade-type\": \"GRADE1\",\n    \"exam-start-time\": \"2025-07-26 15:00\",\n    \"duration-in-minutes\": 120,\n    \"booklet-a-keys\": \"ABCDADCAD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/exams",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete exam",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exams/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exams",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Describes the Exam API, that describes an exam with its date, type, and exam center where it takes place"
+		},
+		{
+			"name": "ExamEntry",
+			"item": [
+				{
+					"name": "Get exam entries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exam-entries",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get exam entry",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exam-entries/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-entries",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register exam entry",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student-id\": 1,\n    \"exam-center-id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/exam-entries",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete exam entry",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/exam-entries/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"exam-entries",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export Batch",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
+			"description": "Describes the ExamEntry API that manages student's registration and results for a specific exam"
+		},
+		{
+			"name": "University",
+			"item": [
+				{
+					"name": "Get universities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "${{BASE_URL}}/universities",
+							"host": [
+								"${{BASE_URL}}"
+							],
+							"path": [
+								"universities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get university",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Register university",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"University #1\",\n    \"description\": \"Description #1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/universities",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"universities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete university",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/universities/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"universities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Describes the University API, ragarding management of information about the university that owns the departments"
+		},
+		{
+			"name": "Department",
+			"item": [
+				{
+					"name": "Get departments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get departments",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/departments",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"departments"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get department",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/departments/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register department",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"department-id\": 2,\n    \"university-id\": 1,\n    \"name\": \"Department #2\",\n    \"preferred-grade\": \"GRADE1\",\n    \"quota\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete department",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/departments/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Import batch",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/nikitakorolev/Downloads/departments-test.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/testing-batch-upload",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"testing-batch-upload"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export batch",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
+			"description": "Describes the Department API, regarding management of a university department, its capacity, and preferred exam type for admissions"
+		},
+		{
+			"name": "Student",
+			"item": [
+				{
+					"name": "Get students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get students",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"students"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get student",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/students/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"students",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student-id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@gmail.com\",\n    \"password\": \"john.doe.12345\",\n    \"cgpa\": 80.21\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Department Choices",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/students/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"students",
+								"1"
+							],
+							"query": [
+								{
+									"key": "department-ids",
+									"value": "1,2,3",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete student",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/students/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"students",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Import batch",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/nikitakorolev/Documents/thesis/students-test.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/students/import",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"students",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export batch",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Student login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.doe@gmail.com\",\n    \"password\": \"john.doe.12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Describes the Student API, regarding management of student information including personal details, encrypted password, exam results, and department preferences"
+		},
+		{
+			"name": "ExamResult",
+			"item": []
+		},
+		{
+			"name": "Placement",
+			"item": [
+				{
+					"name": "Trigger placements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/placements/trigger",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"placements",
+								"trigger"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get placement for department",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/placements?department-id=1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"placements"
+							],
+							"query": [
+								{
+									"key": "department-id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		}
+	]
+}

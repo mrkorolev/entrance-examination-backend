@@ -43,7 +43,7 @@ public class PlacementService {
     @Transactional(readOnly = true)
     public List<PlacementResult> findPlacementsForDepartment(Long departmentId) {
         validateDepartmentExists(departmentId);
-        return repository.findByDepartment_IdOrderByRankDesc(departmentId);
+        return repository.findByDepartment_IdOrderByRankAsc(departmentId);
     }
 
     @Transactional
@@ -95,12 +95,12 @@ public class PlacementService {
             Long deptId = student.getPreferredDepartmentIds()[idx];
             Department department = departmentMap.get(deptId);
 
-            float grade = switch (department.getPreferredGrade()) {
+            float gradeResult = switch (department.getPreferredGrade()) {
                 case GRADE1 -> student.getGrade1Result();
                 case GRADE2 -> student.getGrade2Result();
                 case GRADE3 -> student.getGrade3Result();
             };
-            double score = student.getCgpa() * 0.4 + grade * 0.6;
+            double score = student.getCgpa() * 0.4 + gradeResult * 0.6;
 
             PriorityQueue<StudentWithScore> queue = departmentQueues.get(deptId);
             if (queue.size() < department.getQuota()) {
@@ -133,7 +133,6 @@ public class PlacementService {
             List<StudentWithScore> placedStudentsPerDepartment = new ArrayList<>(placedStudentsQueue);
             placedStudentsPerDepartment.sort(Comparator.comparingDouble((StudentWithScore s) -> s.score).reversed());
 
-            // TODO: extract the file export logic somewhere else
             int rank = 0;
             List<PlacementResult> placements = new ArrayList<>();
             for (StudentWithScore sws : placedStudentsPerDepartment) {
@@ -141,13 +140,13 @@ public class PlacementService {
                 reportBuilder
                         .append(s.getId()).append(" ")
                         .append(s.getName()).append(" ");
-                float grade = switch (d.getPreferredGrade()) {
+                float gradeResult = switch (d.getPreferredGrade()) {
                     case GRADE1 -> s.getGrade1Result();
                     case GRADE2 -> s.getGrade2Result();
                     case GRADE3 -> s.getGrade3Result();
                 };
 
-                reportBuilder.append(grade).append(" ")
+                reportBuilder.append(gradeResult).append(" ")
                         .append(s.getPlacedPreferenceIdx() + 1).append(" ")
                         .append(Arrays.asList(s.getPreferredDepartmentIds()))
                         .append("\n");
@@ -156,6 +155,8 @@ public class PlacementService {
                 PlacementResult result = new PlacementResult();
                 result.setStudent(s);
                 result.setDepartment(d);
+                result.setGrade(d.getPreferredGrade());
+                result.setFinalScore(gradeResult);
                 result.setRank(rank);
                 placements.add(result);
             }

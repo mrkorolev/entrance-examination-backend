@@ -6,5 +6,5 @@ import java.util.List;
 
 @Repository
 public interface PlacementResultRepository extends JpaRepository<PlacementResult, Long> {
-    List<PlacementResult> findByDepartment_IdOrderByRankDesc(Long departmentId);
+    List<PlacementResult> findByDepartment_IdOrderByRankAsc(Long departmentId);
 }
