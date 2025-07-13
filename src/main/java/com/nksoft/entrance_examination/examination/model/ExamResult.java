@@ -51,8 +51,6 @@ public class ExamResult {
     private Float rawScore;
     @Column(name = "normalized_score")
     private Float normalizedScore;
-    @Column(name = "final_score")
-    private Float finalScore;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

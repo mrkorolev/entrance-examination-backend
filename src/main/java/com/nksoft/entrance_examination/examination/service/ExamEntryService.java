@@ -29,6 +29,7 @@ public class ExamEntryService {
     private final ExamCenterRepository centerRepository;
     private final FileExporter exporter;
     private final ConcurrentMap<Long, Object> centerLocks = new ConcurrentHashMap<>();
+    // TODO: remove map, add PessimisticLock support
 
     @Transactional(readOnly = true)
     public Page<ExamEntry> findEntries(Pageable pageable) {

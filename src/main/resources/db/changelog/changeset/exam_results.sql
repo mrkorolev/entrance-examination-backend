@@ -1,6 +1,7 @@
 CREATE TABLE exam_results (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    exam_entry_id bigint NOT NULL,
+    exam_entry_id bigint,
+--     exam_entry_id bigint NOT NULL,
     exam_id int NOT NULL,
 
     booklet_type char(1) NOT NULL,
@@ -10,7 +11,6 @@ CREATE TABLE exam_results (
     unanswered int NOT NULL,
     raw_score float,
     normalized_score float,
-    final_score float,
     created_at timestamp NOT NULL,
 
     UNIQUE(exam_entry_id, exam_id),

@@ -164,7 +164,7 @@ public class PlacementService {
             reportBuilder.append("--------------------------------------------------------------------\n");
         }
 
-        // write all those who didn't make it
+        // all those who didn't make it
         List<Student> didntGetPlaced = studentRepository.findAllByPlacedPreferenceIdxOrderByName(-1);
         reportBuilder.append(-1).append(" ")
                 .append("DIDNT GET PLACED").append("\n\n");
@@ -193,10 +193,8 @@ public class PlacementService {
     private void normalizeAndRescaleResults(List<ExamResult> results, float mean, float sd) {
         results.forEach(r -> {
             float rawScore = r.getRawScore();
-            float normalized = 50 + (rawScore - mean) * (10 / sd);
-            float rescaled = 10 * normalized + 300;
+            float normalized = 50.0F + (rawScore - mean) * (10.F / sd);
             r.setNormalizedScore(normalized);
-            r.setFinalScore(rescaled);
         });
     }
 

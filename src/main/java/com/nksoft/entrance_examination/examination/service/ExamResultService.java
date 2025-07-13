@@ -110,7 +110,7 @@ public class ExamResultService {
 
             log.info("Batch insert complete (exam type - {}): {} new exam results",
                     exam.getGradeType(),
-                    lineNumber);
+                    lineNumber - BookletType.values().length);
         }
     }
 
@@ -122,9 +122,10 @@ public class ExamResultService {
 
         String rawAnswers = params[0].toUpperCase();
         BookletType bt = BookletType.valueOf(params[1].toUpperCase());
-        Long studentCode = Long.parseLong(params[2]);
-        validateStudentExists(studentCode);
-        ExamEntry entry = getEntryByStudentCodeOrElseThrow(studentCode);
+        Long studentId = Long.parseLong(params[2]);
+        validateStudentExists(studentId);
+//        ExamEntry entry = getEntryByStudentCodeOrElseThrow(studentCode);
+        ExamEntry entry = null;
 
         ExamResult result = new ExamResult();
         result.setExamEntry(entry);
@@ -219,7 +220,7 @@ public class ExamResultService {
 
     private Exam getExamByGradeTypeOrThrow(GradeType gradeType) {
         return examRepository.findByGradeType(gradeType).orElseThrow(
-                () -> new IllegalStateException("Exam with grade type = " + gradeType + " already exists"));
+                () -> new IllegalStateException("Exam with grade type = " + gradeType + " doesn't exist"));
     }
 
     private void validateStudentExists(Long studentCode) {

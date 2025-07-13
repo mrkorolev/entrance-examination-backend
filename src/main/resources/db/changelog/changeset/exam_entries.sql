@@ -1,7 +1,9 @@
 CREATE TABLE exam_entries (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     student_id bigint  UNIQUE NOT NULL,
-    exam_center_id bigint NOT NULL,
+--     exam_center_id bigint NOT NULL,
+
+    exam_center_id bigint,
 
     registration_number int NOT NULL,
     created_at timestamp NOT NULL,
