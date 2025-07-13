@@ -23,6 +23,13 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 
+custom:
+  student:
+    choices:
+      min: 3
+      max: 10
+
+
 server:
   servlet:
     context-path: /api/v1

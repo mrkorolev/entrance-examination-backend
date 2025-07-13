@@ -1,5 +1,6 @@
 package com.nksoft.entrance_examination.student;
 
+import com.nksoft.entrance_examination.common.config.props.StudentChoiceProperties;
 import com.nksoft.entrance_examination.student.model.StudentStatus;
 import com.nksoft.entrance_examination.common.file.FileExporter;
 import com.nksoft.entrance_examination.student.model.Student;
@@ -31,6 +32,7 @@ public class StudentService {
     private final DepartmentRepository depRepository;
     private final PasswordEncoder encoder;
     private final FileExporter exporter;
+    private final StudentChoiceProperties props;
 
     @Transactional
     public Student authenticateStudent(String email, String password) {
@@ -77,6 +79,7 @@ public class StudentService {
     }
 
     public Student updateDepartmentPreferences(Long studentId, List<Long> departmentIds) {
+        validateDepartmentListSize(departmentIds);
         validateAllDepartmentsExist(departmentIds);
         Student existing = getByIdOrThrow(studentId);
 
@@ -85,18 +88,18 @@ public class StudentService {
         existing.setStatus(StudentStatus.CHOICES_SUBMITTED);
         Student updated = repository.save(existing);
 
-        log.info("Updated department preferences for student [id = {}, name: {}]",
-                updated.getId(), updated.getName());
+        log.info("Updated department preferences for student [id = {}, choiceIds: {}]",
+                updated.getId(), departmentIds);
         return updated;
     }
 
     @Transactional
-    public void removeStudentByCode(Long code) {
-        int count = repository.deleteByIdReturningCount(code);
+    public void removeStudentById(Long id) {
+        int count = repository.deleteByIdReturningCount(id);
         if (count == 0) {
-            throw new EntityNotFoundException("Student with code " + code + " does not exist");
+            throw new EntityNotFoundException("Student with code " + id + " does not exist");
         }
-        log.info("Removed student with code = {}", code);
+        log.info("Removed student with code = {}", id);
     }
 
     // TODO: finish refactoring parsing logic
@@ -175,9 +178,10 @@ public class StudentService {
                 .append("Result for Grade 3").append(delimiter)
                 .append("Placed Department Index").append(delimiter);
 
-        for (int i = 0; i < 10; i++) {
+        int maxSize = props.getMax();
+        for (int i = 0; i < maxSize; i++) {
             header.append("Dep. choice #").append(i + 1);
-            if (i != 9) {
+            if (i != maxSize - 1) {
                 header.append(delimiter);
             }
         }
@@ -194,21 +198,21 @@ public class StudentService {
                     .append(s.getPlacedPreferenceIdx() != null ? s.getPlacedPreferenceIdx() : "-").append(delimiter);
 
             if (s.getPreferredDepartmentIds() == null) {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSize; i++) {
                     row.append("-");
-                    if (i != 9) {
+                    if (i != maxSize - 1) {
                         row.append(delimiter);
                     }
                 }
             } else {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSize; i++) {
                     if (i < s.getPreferredDepartmentIds().length) {
                         row.append(s.getPreferredDepartmentIds()[i]);
                     } else {
                      row.append("-");
                     }
 
-                    if (i != 9) {
+                    if (i != maxSize - 1) {
                         row.append(delimiter);
                     }
                 }
@@ -253,6 +257,16 @@ public class StudentService {
     private void validateEmailDoesntExist(String email) {
         if (repository.existsByEmail(email)) {
             throw new EntityExistsException("Student with email '" + email + "' already exists");
+        }
+    }
+
+    private void validateDepartmentListSize(List<Long> studentChoiceIds) {
+        int totalChoices = studentChoiceIds.size();
+        int minChoices = props.getMin();
+        int maxChoices = props.getMax();
+        if (totalChoices < minChoices || totalChoices > maxChoices) {
+            String msg = String.format("[MIN: %d, MAX: %d]", minChoices, maxChoices);
+            throw new IllegalArgumentException("Invalid number of departments provided: " + msg);
         }
     }
 

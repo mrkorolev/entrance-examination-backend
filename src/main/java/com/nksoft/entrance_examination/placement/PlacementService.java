@@ -225,5 +225,5 @@ public class PlacementService {
         }
     }
 
-    private record StudentWithScore(Student student, double score) { }
+    private record StudentWithScore(Student student, double score) {}
 }

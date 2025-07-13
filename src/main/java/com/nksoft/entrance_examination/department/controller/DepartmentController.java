@@ -61,7 +61,7 @@ public class DepartmentController {
             @ApiResponse(responseCode = "404", description = "No department found for provided ID")})
     @GetMapping("/{id}")
     public DepartmentDto getDepartmentById(@PathVariable Long id) {
-        Department found = service.findDepartmentByCode(id);
+        Department found = service.findDepartmentById(id);
         return mapper.toDto(found);
     }
 

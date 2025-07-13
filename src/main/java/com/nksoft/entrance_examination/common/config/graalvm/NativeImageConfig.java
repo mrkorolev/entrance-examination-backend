@@ -1,8 +1,9 @@
-package com.nksoft.entrance_examination.common.config;
+package com.nksoft.entrance_examination.common.config.graalvm;
 
-import com.nksoft.entrance_examination.common.config.hints.HibernateHints;
-import com.nksoft.entrance_examination.common.config.hints.LiquibaseHints;
+import com.nksoft.entrance_examination.common.config.graalvm.hints.HibernateHints;
+import com.nksoft.entrance_examination.common.config.graalvm.hints.LiquibaseHints;
 import com.nksoft.entrance_examination.common.advice.ErrorResponse;
+import com.nksoft.entrance_examination.common.config.graalvm.hints.StudentChoiceHints;
 import com.nksoft.entrance_examination.common.validator.classes.DecimalPrecisionValidator;
 import com.nksoft.entrance_examination.common.validator.classes.EnumValidator;
 import com.nksoft.entrance_examination.department.dto.DepartmentDto;
@@ -18,13 +19,15 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.data.domain.PageImpl;
 
 @Configuration
-    @RegisterReflectionForBinding({
-            UniversityDto.class, DepartmentDto.class,
-            ExamCenterDto.class, ExamDto.class,
-            ExamEntryDto.class, StudentDto.class, LoginDto.class,
-            ErrorResponse.class,
-            EnumValidator.class, DecimalPrecisionValidator.class,
-            PageImpl.class
-    })
-    @ImportRuntimeHints({ LiquibaseHints.class, HibernateHints.class })
-    public class NativeImageConfig {}
+@RegisterReflectionForBinding({
+        UniversityDto.class, DepartmentDto.class,
+        ExamCenterDto.class, ExamDto.class,
+        ExamEntryDto.class, StudentDto.class, LoginDto.class,
+        ErrorResponse.class,
+        EnumValidator.class, DecimalPrecisionValidator.class,
+        PageImpl.class })
+@ImportRuntimeHints({
+        LiquibaseHints.class,
+        HibernateHints.class,
+        StudentChoiceHints.class })
+public class NativeImageConfig {}

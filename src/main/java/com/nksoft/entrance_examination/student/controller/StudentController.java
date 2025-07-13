@@ -72,7 +72,7 @@ public class StudentController {
             @ApiResponse(responseCode = "400", description = "Student with provided email or ID already exists")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public StudentDto addNewStudent(@Valid @RequestBody StudentDto dto) {
+    public StudentDto registerStudent(@Valid @RequestBody StudentDto dto) {
         Student toRegister = mapper.toEntity(dto);
         Student registered = service.registerStudent(toRegister);
         return mapper.toDto(registered);
@@ -87,8 +87,8 @@ public class StudentController {
             - some of the departments for provided IDs do not exist
             - student for provided ID doesn't exist""")})
     @PutMapping("/{id}")
-    public StudentDto setStudentDepartmentPreferences(@PathVariable Long id,
-                                                      @RequestParam(name = "department-ids") List<Long> ids) {
+    public StudentDto updateStudentPreferences(@PathVariable Long id,
+                                               @RequestParam(name = "department-ids") List<Long> ids) {
         Student updated = service.updateDepartmentPreferences(id, ids);
         return mapper.toDto(updated);
     }
@@ -100,7 +100,7 @@ public class StudentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteStudentById(@PathVariable Long id) {
-        service.removeStudentByCode(id);
+        service.removeStudentById(id);
     }
 
     @Operation(summary = "Student batch insert", description = "Registers students based on delimiter & info provided in a batch file")

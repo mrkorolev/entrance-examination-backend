@@ -46,8 +46,8 @@ public class DepartmentService {
     }
 
     @Transactional(readOnly = true)
-    public Department findDepartmentByCode(Long code) {
-        return getByCodeOrThrow(code);
+    public Department findDepartmentById(Long id) {
+        return getByCodeOrThrow(id);
     }
 
     public Department registerDepartment(Department toRegister) {
@@ -56,7 +56,6 @@ public class DepartmentService {
         validateUniversityExists(toRegister.getUniversity().getId());
 
         Department registered = repository.save(toRegister);
-
         log.info("Registered department: code = {}, name = {}",
                 registered.getId(),
                 registered.getName());

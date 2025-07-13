@@ -1,4 +1,4 @@
-package com.nksoft.entrance_examination.common.config.hints;
+package com.nksoft.entrance_examination.common.config.graalvm.hints;
 
 import liquibase.changelog.ChangeLogHistoryServiceFactory;
 import liquibase.changelog.ChangeSet;

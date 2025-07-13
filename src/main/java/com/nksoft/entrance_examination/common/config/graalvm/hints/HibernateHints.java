@@ -1,4 +1,4 @@
-package com.nksoft.entrance_examination.common.config.hints;
+package com.nksoft.entrance_examination.common.config.graalvm.hints;
 
 import com.vladmihalcea.hibernate.type.array.LongArrayType;
 import org.springframework.aot.hint.MemberCategory;
@@ -7,7 +7,6 @@ import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
 
 public class HibernateHints implements RuntimeHintsRegistrar {
-
     @Override
     public void registerHints(RuntimeHints hints, @jakarta.annotation.Nullable ClassLoader classLoader) {
         // mihalcea Long[] (LongArrayType) registration

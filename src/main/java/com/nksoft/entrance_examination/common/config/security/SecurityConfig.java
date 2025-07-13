@@ -1,4 +1,4 @@
-package com.nksoft.entrance_examination.common.config;
+package com.nksoft.entrance_examination.common.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
