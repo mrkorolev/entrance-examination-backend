@@ -1,6 +1,5 @@
 package com.nksoft.entrance_examination.placement;
 
-import com.nksoft.entrance_examination.common.mapper.PlacementMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;

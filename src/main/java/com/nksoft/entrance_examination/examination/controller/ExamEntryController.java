@@ -2,7 +2,7 @@ package com.nksoft.entrance_examination.examination.controller;
 
 import com.nksoft.entrance_examination.examination.dto.ExamEntryDto;
 import com.nksoft.entrance_examination.examination.model.ExamEntry;
-import com.nksoft.entrance_examination.common.mapper.ExamEntryMapper;
+import com.nksoft.entrance_examination.examination.mapper.ExamEntryMapper;
 import com.nksoft.entrance_examination.examination.service.ExamEntryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

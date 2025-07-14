@@ -1,7 +1,5 @@
-package com.nksoft.entrance_examination.common.mapper;
+package com.nksoft.entrance_examination.placement;
 
-import com.nksoft.entrance_examination.placement.PlacementResult;
-import com.nksoft.entrance_examination.placement.PlacementResultDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

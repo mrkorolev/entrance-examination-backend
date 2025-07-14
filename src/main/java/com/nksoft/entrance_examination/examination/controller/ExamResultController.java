@@ -1,6 +1,6 @@
 package com.nksoft.entrance_examination.examination.controller;
 
-import com.nksoft.entrance_examination.common.mapper.ExamResultMapper;
+import com.nksoft.entrance_examination.examination.mapper.ExamResultMapper;
 import com.nksoft.entrance_examination.examination.dto.ExamResultDto;
 import com.nksoft.entrance_examination.examination.model.ExamResult;
 import com.nksoft.entrance_examination.examination.model.GradeType;

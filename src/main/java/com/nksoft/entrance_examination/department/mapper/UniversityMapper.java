@@ -1,4 +1,4 @@
-package com.nksoft.entrance_examination.common.mapper;
+package com.nksoft.entrance_examination.department.mapper;
 
 import com.nksoft.entrance_examination.department.dto.UniversityDto;
 import com.nksoft.entrance_examination.department.model.Department;

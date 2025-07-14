@@ -1,6 +1,6 @@
 package com.nksoft.entrance_examination.student.controller;
 
-import com.nksoft.entrance_examination.common.mapper.StudentMapper;
+import com.nksoft.entrance_examination.student.StudentMapper;
 import com.nksoft.entrance_examination.student.dto.LoginDto;
 import com.nksoft.entrance_examination.student.model.Student;
 import com.nksoft.entrance_examination.student.dto.StudentDto;

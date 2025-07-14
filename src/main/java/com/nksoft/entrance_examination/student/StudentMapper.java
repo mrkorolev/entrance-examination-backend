@@ -1,4 +1,4 @@
-package com.nksoft.entrance_examination.common.mapper;
+package com.nksoft.entrance_examination.student;
 
 import com.nksoft.entrance_examination.student.dto.StudentDto;
 import com.nksoft.entrance_examination.student.model.Student;

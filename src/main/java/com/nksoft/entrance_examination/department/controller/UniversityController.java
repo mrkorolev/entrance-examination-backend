@@ -1,6 +1,6 @@
 package com.nksoft.entrance_examination.department.controller;
 
-import com.nksoft.entrance_examination.common.mapper.UniversityMapper;
+import com.nksoft.entrance_examination.department.mapper.UniversityMapper;
 import com.nksoft.entrance_examination.department.model.University;
 import com.nksoft.entrance_examination.department.dto.UniversityDto;
 import com.nksoft.entrance_examination.department.service.UniversityService;
