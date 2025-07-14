@@ -1,5 +1,6 @@
 package com.nksoft.entrance_examination.placement;
 
+import com.nksoft.entrance_examination.common.config.props.NormalizationProperties;
 import com.nksoft.entrance_examination.department.model.Department;
 import com.nksoft.entrance_examination.examination.model.Exam;
 import com.nksoft.entrance_examination.examination.model.ExamResult;
@@ -39,6 +40,7 @@ public class PlacementService {
     private final ExamResultRepository examResultRepository;
     private final ExamRepository examRepository;
     private final PlacementResultRepository repository;
+    private final NormalizationProperties normalProps;
 
     @Transactional(readOnly = true)
     public List<PlacementResult> findPlacementsForDepartment(Long departmentId) {
@@ -53,16 +55,7 @@ public class PlacementService {
         validatePlacementsToBeRun();
         Map<Exam, List<ExamResult>> resultsMap = examResultRepository.findAll().stream()
                 .collect(Collectors.groupingBy(ExamResult::getExam));
-        for (Exam e : resultsMap.keySet()) {
-            List<ExamResult> results = resultsMap.get(e);
-            float mean = calculateMeanForResults(results);
-            float sd = calculateSdForResults(results, mean);
-            normalizeResults(results, mean, sd);
-            e.setMean(mean);
-            e.setStandardDeviation(sd);
-            examResultRepository.saveAll(results);
-        }
-        examRepository.saveAll(resultsMap.keySet());
+        calculateStatisticalParamsForExams(resultsMap);
 
 
         List<Student> students = studentRepository.findByStatus(StudentStatus.CHOICES_SUBMITTED);
@@ -192,10 +185,25 @@ public class PlacementService {
                 .body(reportFile);
     }
 
+    private void calculateStatisticalParamsForExams(Map<Exam, List<ExamResult>> resultsMap) {
+        for (Exam e : resultsMap.keySet()) {
+            List<ExamResult> results = resultsMap.get(e);
+            float mean = calculateMeanForResults(results);
+            float sd = calculateSdForResults(results, mean);
+            normalizeResults(results, mean, sd);
+            e.setMean(mean);
+            e.setStandardDeviation(sd);
+            examResultRepository.saveAll(results);
+        }
+        examRepository.saveAll(resultsMap.keySet());
+    }
+
     private void normalizeResults(List<ExamResult> results, float mean, float sd) {
         results.forEach(r -> {
             float rawScore = r.getRawScore();
-            float normalized = 50.0F + (rawScore - mean) * (10.F / sd);
+            int rescaledMean = normalProps.getRescaledMean();
+            int rescaledSd = normalProps.getRescaledSd();
+            float normalized = rescaledMean + (rawScore - mean) * (rescaledSd / sd);
             r.setNormalizedScore(normalized);
         });
     }

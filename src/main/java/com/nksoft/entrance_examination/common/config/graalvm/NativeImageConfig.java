@@ -3,6 +3,8 @@ package com.nksoft.entrance_examination.common.config.graalvm;
 import com.nksoft.entrance_examination.common.config.graalvm.hints.HibernateHints;
 import com.nksoft.entrance_examination.common.config.graalvm.hints.LiquibaseHints;
 import com.nksoft.entrance_examination.common.advice.ErrorResponse;
+import com.nksoft.entrance_examination.common.config.graalvm.hints.NormalizationHints;
+import com.nksoft.entrance_examination.common.config.graalvm.hints.PlacementHints;
 import com.nksoft.entrance_examination.common.config.graalvm.hints.StudentChoiceHints;
 import com.nksoft.entrance_examination.common.validator.classes.DecimalPrecisionValidator;
 import com.nksoft.entrance_examination.common.validator.classes.EnumValidator;
@@ -29,5 +31,7 @@ import org.springframework.data.domain.PageImpl;
 @ImportRuntimeHints({
         LiquibaseHints.class,
         HibernateHints.class,
-        StudentChoiceHints.class })
+        StudentChoiceHints.class,
+        NormalizationHints.class,
+        PlacementHints.class })
 public class NativeImageConfig {}

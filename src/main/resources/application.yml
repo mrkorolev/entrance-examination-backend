@@ -28,6 +28,13 @@ custom:
     choices:
       min: 3
       max: 10
+  normalization:
+    rescaled-mean: 50
+    rescaled-sd: 10
+  placement:
+    date: 15-07-2025T15:00
+    days-before-placement: 10
+
 
 
 server:
