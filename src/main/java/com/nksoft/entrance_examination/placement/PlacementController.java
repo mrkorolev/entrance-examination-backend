@@ -22,11 +22,18 @@ public class PlacementController {
         return service.runPlacementAndExport();
     }
 
+    // TODO: add documentation info
     @GetMapping
     public List<PlacementResultDto> getPlacements(
             @RequestParam(name = "department-id") Long departmentId
     ) {
         List<PlacementResult> placementResults = service.findPlacementsForDepartment(departmentId);
         return mapper.toDtoList(placementResults);
+    }
+
+    // TODO: add export endpoint
+    @GetMapping("/export")
+    public ResponseEntity<ByteArrayResource> exportPlacements() {
+        return null;
     }
 }

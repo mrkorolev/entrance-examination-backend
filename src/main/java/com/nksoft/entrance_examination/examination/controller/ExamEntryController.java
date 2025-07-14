@@ -89,9 +89,9 @@ public class ExamEntryController {
 
     @Operation(summary = "Export entries", description = "Exports entries to a csv file")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully exported students to students.csv")})
+            @ApiResponse(responseCode = "200", description = "Successfully exported exam entries to exam_entries.csv")})
     @GetMapping("/export")
-    public ResponseEntity<ByteArrayResource> exportStudents(
+    public ResponseEntity<ByteArrayResource> exportEntries(
             @RequestParam(required = false) Long examCenterId) {
         return service.exportEntriesToCsv(examCenterId);
     }

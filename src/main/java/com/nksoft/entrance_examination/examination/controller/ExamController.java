@@ -49,8 +49,8 @@ public class ExamController {
 
     @Operation(summary = "Register exam", description = "Registers and returns a new exam")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of exam for a provided dto"),
-            @ApiResponse(responseCode = "400", description = "Exam to be registered has a time overlap (same day) or there already exists an exam for provided grade type")})
+            @ApiResponse(responseCode = "201", description = "Successful creation of exam from a provided dto"),
+            @ApiResponse(responseCode = "400", description = "Exam to be registered has time (or grade type) overlap on the same day")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ExamDto addNewExam(@Valid @RequestBody ExamDto dto) {

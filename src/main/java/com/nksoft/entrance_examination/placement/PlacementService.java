@@ -43,7 +43,9 @@ public class PlacementService {
     @Transactional(readOnly = true)
     public List<PlacementResult> findPlacementsForDepartment(Long departmentId) {
         validateDepartmentExists(departmentId);
-        return repository.findByDepartment_IdOrderByRankAsc(departmentId);
+        List<PlacementResult> placements = repository.findByDepartment_IdOrderByRankAsc(departmentId);
+        log.info("Found {} placements [departmentId: {}]", placements.size(), departmentId);
+        return placements;
     }
 
     @Transactional
@@ -55,7 +57,7 @@ public class PlacementService {
             List<ExamResult> results = resultsMap.get(e);
             float mean = calculateMeanForResults(results);
             float sd = calculateSdForResults(results, mean);
-            normalizeAndRescaleResults(results, mean, sd);
+            normalizeResults(results, mean, sd);
             e.setMean(mean);
             e.setStandardDeviation(sd);
             examResultRepository.saveAll(results);
@@ -190,7 +192,7 @@ public class PlacementService {
                 .body(reportFile);
     }
 
-    private void normalizeAndRescaleResults(List<ExamResult> results, float mean, float sd) {
+    private void normalizeResults(List<ExamResult> results, float mean, float sd) {
         results.forEach(r -> {
             float rawScore = r.getRawScore();
             float normalized = 50.0F + (rawScore - mean) * (10.F / sd);

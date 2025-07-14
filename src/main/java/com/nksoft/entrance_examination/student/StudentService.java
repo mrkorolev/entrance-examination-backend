@@ -36,7 +36,7 @@ public class StudentService {
 
     @Transactional
     public Student authenticateStudent(String email, String password) {
-        log.info("Student login: [{}, {}]", email, password);
+        log.debug("Student login: [{}, {}]", email, password);
         Student toLogin = getByEmailOrThrow(email);
         validatePasswordsMatch(email, password, toLogin.getPasswordHash());
         return toLogin;
@@ -47,14 +47,14 @@ public class StudentService {
     public List<Student> findStudentsByCodes(List<Long> ids) {
         List<Student> students = repository.findAllById(ids);
         validateAllStudentsExist(ids, students);
-        log.info("Total students found: {}", students.size());
+        log.debug("Total students found: {}", students.size());
         return repository.findAllById(ids);
     }
 
     @Transactional(readOnly = true)
     public Page<Student> findStudents(Pageable pageable) {
         Page<Student> page = repository.findAll(pageable);
-        log.info("Total students found: {}", page.getTotalElements());
+        log.debug("Total students found: {}", page.getTotalElements());
         return page;
     }
 
@@ -71,7 +71,7 @@ public class StudentService {
         toRegister.setStatus(StudentStatus.REGISTERED);
 
         Student registered = repository.save(toRegister);
-        log.info("Student registered: [{} - {} - {}]",
+        log.debug("Student registered: [{} - {} - {}]",
                 registered.getId(),
                 registered.getName(),
                 registered.getEmail());
@@ -88,7 +88,7 @@ public class StudentService {
         existing.setStatus(StudentStatus.CHOICES_SUBMITTED);
         Student updated = repository.save(existing);
 
-        log.info("Updated department preferences for student [id = {}, choiceIds: {}]",
+        log.debug("Updated department preferences for student [id = {}, choiceIds: {}]",
                 updated.getId(), departmentIds);
         return updated;
     }
@@ -99,7 +99,7 @@ public class StudentService {
         if (count == 0) {
             throw new EntityNotFoundException("Student with code " + id + " does not exist");
         }
-        log.info("Removed student with code = {}", id);
+        log.debug("Removed student with code = {}", id);
     }
 
     // TODO: finish refactoring parsing logic

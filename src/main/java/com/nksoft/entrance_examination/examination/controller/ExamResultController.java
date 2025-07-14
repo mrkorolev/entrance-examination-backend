@@ -30,8 +30,8 @@ public class ExamResultController {
     private final ExamResultService service;
     private final ExamResultMapper mapper;
 
-    @Operation(summary = "Get students", description = "Returns a Page of exam results")
-    @ApiResponse(responseCode = "200", description = "Successful retrieval of students")
+    @Operation(summary = "Get exam results", description = "Returns a Page of exam results")
+    @ApiResponse(responseCode = "200", description = "Successful retrieval of exam results")
     @GetMapping
     public Page<ExamResultDto> getResults(
             @PageableDefault(size = 20, sort = "id") Pageable pageable
@@ -40,9 +40,9 @@ public class ExamResultController {
         return page.map(mapper::toDto);
     }
 
-    @Operation(summary = "Exam result batch file insert", description = "Inserts exam results as well as answer keys for particular exam type in a batch insert file")
+    @Operation(summary = "Exam result batch file insert", description = "Inserts exam results as well as answer keys for particular exam type in a batch file")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful insertion of exam results from a batch insert file"),
+            @ApiResponse(responseCode = "201", description = "Successful insertion of exam results from a batch file"),
             @ApiResponse(responseCode = "400", description = """
             An error occurred while parsing through the batch file. Happens if:
             - provided results file is empty"
@@ -54,12 +54,12 @@ public class ExamResultController {
                                            @RequestParam(defaultValue = "50") int batchSize,
                                            @RequestParam(name = "exam-grade-type") GradeType examGradeType) throws IOException {
         service.processBatchFile(examGradeType, file, delimiter, batchSize);
-        return ResponseEntity.ok("Successfully processed exam results file");
+        return ResponseEntity.ok("Successfully imported exam results from a batch file");
     }
 
     @Operation(summary = "Export exam results", description = "Exports exam results to a csv batch file")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully exported students to a csv batch file")})
+            @ApiResponse(responseCode = "200", description = "Successfully exported exam results to a csv batch file")})
     @GetMapping("/export")
     public ResponseEntity<ByteArrayResource> exportResults() {
         return service.exportResultsToCsv();

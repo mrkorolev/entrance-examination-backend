@@ -5,4 +5,7 @@ spring:
 
 logging:
   level:
-    com.nksoft: INFO
+    root: DEBUG
+    com.nksoft: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    org.hibernate.SQL: DEBUG

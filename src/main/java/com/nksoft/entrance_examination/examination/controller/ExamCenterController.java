@@ -31,7 +31,7 @@ public class ExamCenterController {
     private final ExamCenterService service;
     private final ExamCenterMapper mapper;
 
-    @Operation(summary = "Get exam centers", description = "Returns a list of exam centers, either all or only available")
+    @Operation(summary = "Get exam centers", description = "Returns a list of exam centers, either all or available")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of exam centers"))
     @GetMapping
     public List<ExamCenterDto> getCenters(@RequestParam(defaultValue = "false", required = false) boolean availableOnly) {
@@ -51,7 +51,7 @@ public class ExamCenterController {
 
     @Operation(summary = "Register exam center", description = "Registers and returns a newly created exam center")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successful creation of exam center for a provided dto"),
+            @ApiResponse(responseCode = "201", description = "Successful creation of exam center from a provided dto"),
             @ApiResponse(responseCode = "400", description = "Exam center with provided name already exists")})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping

@@ -5,4 +5,9 @@ spring:
 
 logging:
   level:
-    com.nksoft: WARN
+    root: INFO
+    com.nksoft: INFO
+    org.springframework.web.filter.CommonsRequestLoggingFilter: OFF
+    org.hibernate.SQL: WARN
+  file:
+    name: logs/app.log
