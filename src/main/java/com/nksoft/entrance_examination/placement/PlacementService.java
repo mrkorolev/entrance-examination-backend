@@ -1,5 +1,6 @@
 package com.nksoft.entrance_examination.placement;
 
+import com.nksoft.entrance_examination.common.aspect.ProfileExecution;
 import com.nksoft.entrance_examination.common.config.props.NormalizationProperties;
 import com.nksoft.entrance_examination.department.model.Department;
 import com.nksoft.entrance_examination.examination.model.Exam;
@@ -50,13 +51,13 @@ public class PlacementService {
         return placements;
     }
 
+    @ProfileExecution(logMemory = true)
     @Transactional
     public ResponseEntity<ByteArrayResource> runPlacementAndExport() {
         validatePlacementsToBeRun();
         Map<Exam, List<ExamResult>> resultsMap = examResultRepository.findAll().stream()
                 .collect(Collectors.groupingBy(ExamResult::getExam));
         calculateStatisticalParamsForExams(resultsMap);
-
 
         List<Student> students = studentRepository.findByStatus(StudentStatus.CHOICES_SUBMITTED);
         List<Department> departmentList = departmentRepository.findAll();
@@ -201,8 +202,8 @@ public class PlacementService {
     private void normalizeResults(List<ExamResult> results, float mean, float sd) {
         results.forEach(r -> {
             float rawScore = r.getRawScore();
-            int rescaledMean = normalProps.getRescaledMean();
-            int rescaledSd = normalProps.getRescaledSd();
+            float rescaledMean = normalProps.getRescaledMean();
+            float rescaledSd = normalProps.getRescaledSd();
             float normalized = rescaledMean + (rawScore - mean) * (rescaledSd / sd);
             r.setNormalizedScore(normalized);
         });
