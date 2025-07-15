@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +80,7 @@ public class StudentService {
     }
 
     public Student updateDepartmentPreferences(Long studentId, List<Long> departmentIds) {
+        validateUpdateDateValid();
         validateDepartmentListSize(departmentIds);
         validateAllDepartmentsExist(departmentIds);
         Student existing = getByIdOrThrow(studentId);
@@ -286,6 +288,13 @@ public class StudentService {
         if (!encoder.matches(provided, actualEncoded)) {
             String msg = String.format("Provided incorrect password [%s], for student with email: %s)", provided, email);
             throw new IllegalArgumentException(msg);
+        }
+    }
+
+    private void validateUpdateDateValid() {
+        LocalDateTime deadline = props.getChoiceSubmissionDeadline();
+        if (LocalDateTime.now().isAfter(deadline)) {
+            throw new IllegalStateException("Can no longer update department choices [deadline: " + deadline + "]");
         }
     }
 }

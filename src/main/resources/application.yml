@@ -28,11 +28,10 @@ custom:
     choices:
       min: 3
       max: 10
+      choice-submission-deadline: 2025-07-25T15:00:00
   normalization:
     rescaled-mean: 50
     rescaled-sd: 10
-  placement:
-    choice-submission-deadline: 2025-07-25T15:00:00
 
 server:
   servlet:
