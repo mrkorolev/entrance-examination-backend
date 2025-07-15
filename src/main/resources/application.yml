@@ -32,10 +32,7 @@ custom:
     rescaled-mean: 50
     rescaled-sd: 10
   placement:
-    date: 15-07-2025T15:00
-    days-before-placement: 10
-
-
+    choice-submission-deadline: 2025-07-25T15:00:00
 
 server:
   servlet:
