@@ -3,7 +3,6 @@ CREATE TABLE placement_results (
     department_id bigint NOT NULL,
     student_id bigint UNIQUE NOT NULL,
 
-    placement_rank int NOT NULL,
     final_score float NOT NULL,
     preferred_by_department varchar(6) NOT NULL,
 

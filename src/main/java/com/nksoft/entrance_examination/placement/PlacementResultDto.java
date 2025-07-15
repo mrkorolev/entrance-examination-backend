@@ -14,5 +14,4 @@ public class PlacementResultDto {
     private Long studentId;
     private GradeType gradeType;
     private Long finalScore;
-    private int rank;
 }

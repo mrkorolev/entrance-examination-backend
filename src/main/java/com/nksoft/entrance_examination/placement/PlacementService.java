@@ -46,7 +46,7 @@ public class PlacementService {
     @Transactional(readOnly = true)
     public List<PlacementResult> findPlacementsForDepartment(Long departmentId) {
         validateDepartmentExists(departmentId);
-        List<PlacementResult> placements = repository.findByDepartment_IdOrderByRankAsc(departmentId);
+        List<PlacementResult> placements = repository.findByDepartment_IdOrderByFinalScoreDesc(departmentId);
         log.info("Found {} placements [departmentId: {}]", placements.size(), departmentId);
         return placements;
     }
@@ -129,7 +129,6 @@ public class PlacementService {
             List<StudentWithScore> placedStudentsPerDepartment = new ArrayList<>(placedStudentsQueue);
             placedStudentsPerDepartment.sort(Comparator.comparingDouble((StudentWithScore s) -> s.score).reversed());
 
-            int rank = 0;
             List<PlacementResult> placements = new ArrayList<>();
             for (StudentWithScore sws : placedStudentsPerDepartment) {
                 Student s = sws.student;
@@ -147,13 +146,11 @@ public class PlacementService {
                         .append(Arrays.asList(s.getPreferredDepartmentIds()))
                         .append("\n");
 
-                rank++;
                 PlacementResult result = new PlacementResult();
                 result.setStudent(s);
                 result.setDepartment(d);
                 result.setGrade(d.getPreferredGrade());
                 result.setFinalScore(gradeResult);
-                result.setRank(rank);
                 placements.add(result);
             }
             repository.saveAll(placements);

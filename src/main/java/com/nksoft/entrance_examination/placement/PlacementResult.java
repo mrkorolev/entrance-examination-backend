@@ -50,7 +50,4 @@ public class PlacementResult {
     @Enumerated(EnumType.STRING)
     @Column(name = "preferred_by_department", nullable = false)
     private GradeType grade;
-
-    @Column(name = "placement_rank", nullable = false)
-    private int rank;
 }
