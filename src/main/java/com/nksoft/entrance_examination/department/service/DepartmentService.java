@@ -39,6 +39,13 @@ public class DepartmentService {
     }
 
     @Transactional(readOnly = true)
+    public List<Department> findDepartments() {
+        List<Department> departments = repository.findAll();
+        log.info("Total departments found: {}", departments.size());
+        return departments;
+    }
+
+    @Transactional(readOnly = true)
     public List<Department> findDepartmentsByIds(List<Long> codes) {
         List<Department> departments = repository.findAllById(codes);
         validateAllDepartmentsExist(codes, departments);

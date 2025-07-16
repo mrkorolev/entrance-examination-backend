@@ -11,9 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,22 +34,30 @@ public class DepartmentController {
     private final DepartmentService service;
     private final DepartmentMapper mapper;
 
-    @Operation(summary = "Get departments", description = "Returns a list of departments if department IDs were provided (otherwise returns a Page)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of departments (Page of DTO list)"),
-            @ApiResponse(responseCode = "404", description = "Some departments for the provided IDs do not exist")})
+//    @Operation(summary = "Get departments", description = "Returns a list of departments if department IDs were provided (otherwise returns a Page)")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "Successful retrieval of departments (Page of DTO list)"),
+//            @ApiResponse(responseCode = "404", description = "Some departments for the provided IDs do not exist")})
+//    @GetMapping
+//    public ResponseEntity<?> getDepartments(
+//            @RequestParam(name = "department-ids", required = false) List<Long> ids,
+//            @PageableDefault(size = 20, sort = "id") Pageable pageable
+//    ) {
+//        if (ids == null || ids.isEmpty()) {
+//            Page<Department> page = service.findDepartments(pageable);
+//            return ResponseEntity.ok(page.map(mapper::toDto));
+//        } else {
+//            List<Department> departments = service.findDepartmentsByIds(ids);
+//            return ResponseEntity.ok(mapper.toDtoList(departments));
+//        }
+//    }
+
+    @Operation(summary = "Get departments", description = "Returns a list of departments")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of departments"))
     @GetMapping
-    public ResponseEntity<?> getDepartments(
-            @RequestParam(name = "department-ids", required = false) List<Long> ids,
-            @PageableDefault(size = 20, sort = "id") Pageable pageable
-    ) {
-        if (ids == null || ids.isEmpty()) {
-            Page<Department> page = service.findDepartments(pageable);
-            return ResponseEntity.ok(page.map(mapper::toDto));
-        } else {
-            List<Department> departments = service.findDepartmentsByIds(ids);
-            return ResponseEntity.ok(mapper.toDtoList(departments));
-        }
+    public List<DepartmentDto> getCenters() {
+        List<Department> departments = service.findDepartments();
+        return mapper.toDtoList(departments);
     }
 
     @Operation(summary = "Get department by ID", description = "Returns a single department with a unique ID")
