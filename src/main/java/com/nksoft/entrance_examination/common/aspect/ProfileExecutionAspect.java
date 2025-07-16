@@ -39,14 +39,14 @@ public class ProfileExecutionAspect {
         if (logMemory) {
             log.info(
                     "{} executed in {} ms ({} min {} sec), heap: {} MB → {} MB (diff: {} MB)",
-                    joinPoint.getSignature(),
+                    joinPoint.getSignature().getName(),
                     durationMs, minutes, seconds,
                     usedBefore, usedAfter, heapDiff
             );
         } else {
             log.info(
                     "{} executed in {} ms ({} min {} sec)",
-                    joinPoint.getSignature(),
+                    joinPoint.getSignature().getName(),
                     durationMs, minutes, seconds
             );
         }
