@@ -115,7 +115,7 @@ public class StudentController {
     @PostMapping("/import")
     public ResponseEntity<?> importStudents(@RequestBody MultipartFile file,
                                             @RequestParam(defaultValue = " ") String delimiter,
-                                            @RequestParam(defaultValue = "50") int batchSize) throws IOException {
+                                            @RequestParam(defaultValue = "5000") int batchSize) throws IOException {
         service.importStudents(file, delimiter, batchSize);
         return ResponseEntity.ok("Successfully processed students batch file");
     }

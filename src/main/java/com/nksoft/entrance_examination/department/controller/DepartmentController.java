@@ -55,7 +55,7 @@ public class DepartmentController {
     @Operation(summary = "Get departments", description = "Returns a list of departments")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful retrieval of departments"))
     @GetMapping
-    public List<DepartmentDto> getCenters() {
+    public List<DepartmentDto> getDepartments() {
         List<Department> departments = service.findDepartments();
         return mapper.toDtoList(departments);
     }

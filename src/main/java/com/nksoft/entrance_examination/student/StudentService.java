@@ -1,5 +1,6 @@
 package com.nksoft.entrance_examination.student;
 
+import com.nksoft.entrance_examination.common.aspect.ProfileExecution;
 import com.nksoft.entrance_examination.common.config.props.StudentChoiceProperties;
 import com.nksoft.entrance_examination.student.model.StudentStatus;
 import com.nksoft.entrance_examination.common.file.FileExporter;
@@ -23,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -65,7 +68,7 @@ public class StudentService {
     }
 
     public Student registerStudent(Student toRegister) {
-        validateIdIsUnique(toRegister.getId());
+        validateIdsAreUnique(List.of(toRegister));
         validateEmailDoesntExist(toRegister.getEmail());
         String encrypted = encoder.encode(toRegister.getPasswordHash());
         toRegister.setPasswordHash(encrypted);
@@ -105,7 +108,7 @@ public class StudentService {
     }
 
     // TODO: finish refactoring parsing logic
-    @Transactional
+    @ProfileExecution(logMemory = true)
     public void importStudents(MultipartFile file, String delimiter, int batchSize) throws IOException {
         validateFileNotEmpty(file);
         log.warn("Batch file processing: {}, [size: {} bytes, content type: {}, delimiter: {}]",
@@ -122,24 +125,29 @@ public class StudentService {
                     throw new IllegalArgumentException("Empty lines are not allowed in a batch file");
                 }
                 Student toSave = parseToStudent(line, delimiter);
-                validateIdIsUnique(toSave.getId());
                 toInsert.add(toSave);
                 if (toInsert.size() == batchSize) {
-                    repository.saveAll(toInsert);
+                    log.info("Saving students batch: {}", toInsert.size());
+                    saveBatch(toInsert);
                     toInsert.clear();
                 }
             }
             if (!toInsert.isEmpty()) {
-                repository.saveAll(toInsert);
+                saveBatch(toInsert);
             }
             log.warn("Batch insert complete: {} new students", lineNumber);
         }
     }
 
+    @Transactional
+    public void saveBatch(List<Student> toInsert) {
+        repository.saveAll(toInsert);
+    }
+
     // TODO: extract to a separate component
     private Student parseToStudent(String line, String delimiter) {
         String[] params = line.split(delimiter);
-        if (params.length != 15) {
+        if (params.length < 8 || params.length > 29) {
             throw new IllegalArgumentException("File doesn't follow the expected format: [id, name, grade1, grade2, grade3, preferences(10)]");
         }
         Long id = Long.parseLong(params[0]);
@@ -148,8 +156,8 @@ public class StudentService {
         float grade2 = Float.parseFloat(params[3]);
         float grade3 = Float.parseFloat(params[4]);
 
-        Long[] preferences = new Long[10];
-        for(int i = 5, j = 0; i < 15; i++, j++) {
+        Long[] preferences = new Long[params.length - 5];
+        for(int i = 5, j = 0; i < params.length; i++, j++) {
             preferences[j] = Long.parseLong(params[i]);
         }
 
@@ -250,9 +258,21 @@ public class StudentService {
         }
     }
 
-    private void validateIdIsUnique(Long code) {
-        if (repository.existsById(code)) {
-            throw new EntityExistsException("Student with code = " + code + " already exists");
+    private void validateIdsAreUnique(List<Student> batch) {
+        Set<Long> seenInBatch = new HashSet<>();
+        for (Student s : batch) {
+            if (!seenInBatch.add(s.getId())) {
+                throw new IllegalArgumentException("Duplicate student ID " + s.getId() + " found in the same batch.");
+            }
+        }
+
+        List<Long> ids = batch.stream().map(Student::getId).toList();
+        Set<Long> existingIds = new HashSet<>(repository.findExistingIds(ids));
+
+        for (Long id : ids) {
+            if (existingIds.contains(id)) {
+                throw new IllegalArgumentException("Student with ID " + id + " already exists in the database.");
+            }
         }
     }
 

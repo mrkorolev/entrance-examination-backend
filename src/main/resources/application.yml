@@ -15,6 +15,20 @@ spring:
     username: user
     password: password
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 125MB
+
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 5000
+        order_updates: true
+#        generate_statistics: true
+
+
   # TODO: Change later for lazy init
 #  jpa:
 #    open-in-view: false

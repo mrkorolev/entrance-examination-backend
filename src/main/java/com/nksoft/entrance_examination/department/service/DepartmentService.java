@@ -10,8 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,12 +29,12 @@ public class DepartmentService {
     private final UniversityRepository uniRepository;
     private final FileExporter exporter;
 
-    @Transactional(readOnly = true)
-    public Page<Department> findDepartments(Pageable pageable) {
-        Page<Department> page = repository.findAll(pageable);
-        log.info("Total departments found: {}", page.getTotalElements());
-        return page;
-    }
+//    @Transactional(readOnly = true)
+//    public Page<Department> findDepartments(Pageable pageable) {
+//        Page<Department> page = repository.findAll(pageable);
+//        log.info("Total departments found: {}", page.getTotalElements());
+//        return page;
+//    }
 
     @Transactional(readOnly = true)
     public List<Department> findDepartments() {
