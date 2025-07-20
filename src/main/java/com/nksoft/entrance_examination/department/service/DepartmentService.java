@@ -4,7 +4,7 @@ import com.nksoft.entrance_examination.department.model.Department;
 import com.nksoft.entrance_examination.department.repository.DepartmentRepository;
 import com.nksoft.entrance_examination.department.repository.UniversityRepository;
 import com.nksoft.entrance_examination.examination.model.GradeType;
-import com.nksoft.entrance_examination.common.file.FileExporter;
+import com.nksoft.entrance_examination.common.file.CsvExporter;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.List;
 public class DepartmentService {
     private final DepartmentRepository repository;
     private final UniversityRepository uniRepository;
-    private final FileExporter exporter;
+    private final CsvExporter exporter;
 
 //    @Transactional(readOnly = true)
 //    public Page<Department> findDepartments(Pageable pageable) {

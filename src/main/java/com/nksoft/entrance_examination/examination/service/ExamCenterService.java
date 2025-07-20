@@ -1,6 +1,6 @@
 package com.nksoft.entrance_examination.examination.service;
 
-import com.nksoft.entrance_examination.common.file.FileExporter;
+import com.nksoft.entrance_examination.common.file.CsvExporter;
 import com.nksoft.entrance_examination.examination.model.ExamCenter;
 import com.nksoft.entrance_examination.examination.repository.ExamCenterRepository;
 import jakarta.persistence.EntityExistsException;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExamCenterService {
     private final ExamCenterRepository repository;
-    private final FileExporter exporter;
+    private final CsvExporter exporter;
 
     @Transactional(readOnly = true)
     public List<ExamCenter> findCenters(boolean availableOnly) {

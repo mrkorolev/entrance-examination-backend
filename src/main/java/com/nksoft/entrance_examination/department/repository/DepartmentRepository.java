@@ -18,4 +18,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     @Modifying
     @Query("DELETE FROM Department d WHERE d.id = :id")
     int deleteByIdReturningCount(@Param("id") Long id);
+
+    List<Department> findAllByOrderById();
 }

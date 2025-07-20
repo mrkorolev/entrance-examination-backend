@@ -1,6 +1,6 @@
 package com.nksoft.entrance_examination.examination.service;
 
-import com.nksoft.entrance_examination.common.file.FileExporter;
+import com.nksoft.entrance_examination.common.file.CsvExporter;
 import com.nksoft.entrance_examination.examination.model.BookletType;
 import com.nksoft.entrance_examination.examination.model.Exam;
 import com.nksoft.entrance_examination.examination.model.ExamEntry;
@@ -38,7 +38,7 @@ public class ExamResultService {
     private final ExamResultRepository repository;
     private final ExamRepository examRepository;
     private final StudentRepository studentRepository;
-    private final FileExporter exporter;
+    private final CsvExporter exporter;
     private final ExamEntryRepository entryRepository;
 
     @Transactional(readOnly = true)

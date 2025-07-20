@@ -3,7 +3,7 @@ package com.nksoft.entrance_examination.student;
 import com.nksoft.entrance_examination.common.aspect.ProfileExecution;
 import com.nksoft.entrance_examination.common.config.props.StudentChoiceProperties;
 import com.nksoft.entrance_examination.student.model.StudentStatus;
-import com.nksoft.entrance_examination.common.file.FileExporter;
+import com.nksoft.entrance_examination.common.file.CsvExporter;
 import com.nksoft.entrance_examination.student.model.Student;
 import com.nksoft.entrance_examination.department.repository.DepartmentRepository;
 import jakarta.persistence.EntityExistsException;
@@ -35,7 +35,7 @@ public class StudentService {
     private final StudentRepository repository;
     private final DepartmentRepository depRepository;
     private final PasswordEncoder encoder;
-    private final FileExporter exporter;
+    private final CsvExporter exporter;
     private final StudentChoiceProperties props;
 
     @Transactional
@@ -109,6 +109,7 @@ public class StudentService {
 
     // TODO: finish refactoring parsing logic
     @ProfileExecution(logMemory = true)
+    @Transactional
     public void importStudents(MultipartFile file, String delimiter, int batchSize) throws IOException {
         validateFileNotEmpty(file);
         log.warn("Batch file processing: {}, [size: {} bytes, content type: {}, delimiter: {}]",
@@ -138,13 +139,10 @@ public class StudentService {
             log.warn("Batch insert complete: {} new students", lineNumber);
         }
     }
-
-    @Transactional
     public void saveBatch(List<Student> toInsert) {
         repository.saveAll(toInsert);
     }
 
-    // TODO: extract to a separate component
     private Student parseToStudent(String line, String delimiter) {
         String[] params = line.split(delimiter);
         if (params.length < 8 || params.length > 29) {

@@ -22,7 +22,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     List<Student> findByStatus(StudentStatus status);
 
-    List<Student> findAllByPlacedPreferenceIdxOrderByName(Integer placedPreferenceIdx);
+    List<Student> findByStatusOrderByNameAsc(StudentStatus status);
 
     @Query("SELECT s.id FROM Student s WHERE s.id IN :ids")
     List<Long> findExistingIds(List<Long> ids);

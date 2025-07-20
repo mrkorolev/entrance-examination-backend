@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-public class FileExporter {
+public class CsvExporter {
     public <T> ByteArrayResource exportToCsv(String headerRow, List<T> data, Function<T, String> mapper) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (PrintWriter writer = new PrintWriter(out)) {
