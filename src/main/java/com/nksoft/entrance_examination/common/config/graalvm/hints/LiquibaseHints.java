@@ -30,7 +30,7 @@ public class LiquibaseHints implements RuntimeHintsRegistrar {
 
         // Register resource patterns for YAML, SQL and other resources
         hints.resources().registerPattern("banner.txt");
-        hints.resources().registerPattern("logback.xml");
+        hints.resources().registerPattern("logback-spring.xml");
         hints.resources().registerPattern("db/changelog/db.changelog-master.yaml");
         hints.resources().registerPattern("db/changelog/changeset/.*\\.sql");
     }
