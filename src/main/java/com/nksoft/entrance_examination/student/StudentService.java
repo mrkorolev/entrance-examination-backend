@@ -85,6 +85,7 @@ public class StudentService {
     public Student updateDepartmentPreferences(Long studentId, List<Long> departmentIds) {
         validateUpdateDateValid();
         validateDepartmentListSize(departmentIds);
+        validateDepartmentListUnique(departmentIds);
         validateAllDepartmentsExist(departmentIds);
         Student existing = getByIdOrThrow(studentId);
 
@@ -287,6 +288,19 @@ public class StudentService {
         if (totalChoices < minChoices || totalChoices > maxChoices) {
             String msg = String.format("[MIN: %d, MAX: %d]", minChoices, maxChoices);
             throw new IllegalArgumentException("Invalid number of departments provided: " + msg);
+        }
+    }
+
+    private void validateDepartmentListUnique(List<Long> departmentIds) {
+        Set<Long> seen = new HashSet<>();
+        Set<Long> duplicates = new HashSet<>();
+        for (Long id : departmentIds) {
+            if (!seen.add(id)) {
+                duplicates.add(id);
+            }
+        }
+        if (!duplicates.isEmpty()) {
+            throw new IllegalArgumentException("Department IDs list provided contains duplicates: " + duplicates);
         }
     }
 

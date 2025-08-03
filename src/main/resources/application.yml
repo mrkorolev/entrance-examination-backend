@@ -21,17 +21,17 @@ spring:
       max-request-size: 125MB
 
   jpa:
+#    open-in-view: false
+    show-sql: true
     properties:
       hibernate:
+        format_sql: true
         jdbc:
           batch_size: 5000
         order_updates: true
-#        generate_statistics: true
 
 
-  # TODO: Change later for lazy init
-#  jpa:
-#    open-in-view: false
+
 
   # no autoconfiguration for spring security
   autoconfigure:
