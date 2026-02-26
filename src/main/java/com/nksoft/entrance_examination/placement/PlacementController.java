@@ -29,10 +29,10 @@ public class PlacementController {
             - placement algorithm has recently been triggered (db contents were altered)
             - not all exams were conducted at the moment of triggering the algorithm
             - statistical params can't be calculated (exam results for some exam are absent)""")})
-    @GetMapping("/trigger")
+    @GetMapping("/trigger-sequential")
     public ResponseEntity<?> triggerPlacements() {
         service.runPlacementAlgorithm();
-        return ResponseEntity.ok("Placement algorithm was executed successfully");
+        return ResponseEntity.ok("Placement algorithm (sequential) was executed successfully");
     }
 
     @Operation(summary = "Get placements for department", description = "Returns a list of placement results for provided department ID")

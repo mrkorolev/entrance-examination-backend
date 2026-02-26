@@ -101,6 +101,7 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<!-- Cucumber -->
 		<dependency>
 			<groupId>io.cucumber</groupId>

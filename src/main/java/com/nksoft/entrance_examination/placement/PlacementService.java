@@ -253,7 +253,7 @@ public class PlacementService {
 
     private void validatePlacementsToBeRun() {
         if (repository.count() != 0) {
-            throw new IllegalStateException("Placement algorithm has already been run recently");
+            throw new IllegalStateException("Placement algorithm has been triggered recently");
         }
     }
 
